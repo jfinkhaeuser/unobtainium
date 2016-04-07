@@ -12,6 +12,7 @@ module Unobtainium
     ##
     # Driver implementation wrapping the selenium-webdriver gem.
     class Selenium
+      # Recognized labels for matching the driver
       LABELS = {
         firefox: [:ff,],
         internet_explorer: [:internetexplorer, :explorer, :ie,],
