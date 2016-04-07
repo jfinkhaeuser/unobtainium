@@ -20,11 +20,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["jens@finkhaeuser.de"]
   spec.description   = %q(
     Unobtainium wraps Selenium and Appium in a simple driver abstraction so that
-    test code can more easily cover:
-
-      - Desktop browsers
-      - Mobile browsers
-      - Mobile apps
+    test code can more easily cover desktop browsers, mobile browsers and mobile
+    apps.
 
     Some additional useful functionality for the maintenance of test suites is
     also added.
