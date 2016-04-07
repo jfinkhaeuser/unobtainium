@@ -119,10 +119,10 @@ module Unobtainium
     ##
     # Out of the loaded drivers, returns the one matching the label (if any)
     def get_driver(label)
-      # Of all the loaded classes, choose the first (sorted) to match the
+      # Of all the loaded classes, choose the first (unsorted) to match the
       # requested driver label
       impl = nil
-      @@drivers.sort.each do |klass, _|
+      @@drivers.keys.each do |klass|
         if klass.matches?(label)
           impl = klass
           break
