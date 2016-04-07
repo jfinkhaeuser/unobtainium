@@ -12,6 +12,8 @@ so that test code can more easily cover:
 Some additional useful functionality for the maintenance of test suites is
 also added.
 
+[![Gem Version](https://badge.fury.io/rb/unobtainium.svg)](https://badge.fury.io/rb/unobtainium)
+
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
 but vastly less complex, and aims to stay so.
