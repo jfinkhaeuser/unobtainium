@@ -42,18 +42,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rubocop", "~> 0.39"
-  #  spec.add_development_dependency "rake"
-  #  spec.add_development_dependency "simplecov"
-  #
-  #  spec.add_dependency "thor", "~> 0.19"
-  #  spec.add_dependency "facets", "~> 2.9"
-  #  spec.add_dependency "json", "~> 1.8"
-  #  spec.add_dependency "faraday", "~> 0.9"
-  #  spec.add_dependency "faraday_middleware", "~> 0.9"
-  #  spec.add_dependency "faraday_json", "~> 0.1"
-  #  spec.add_dependency "multi_xml", "~> 0.5"
-  #  spec.add_dependency "teelogger", "~> 0.5"
-  #  spec.add_dependency "minitest", "~> 5.5"
 end
 # rubocop:enable Style/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
