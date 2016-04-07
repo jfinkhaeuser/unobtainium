@@ -57,4 +57,3 @@ Gem::Specification.new do |spec|
 end
 # rubocop:enable Style/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
-
