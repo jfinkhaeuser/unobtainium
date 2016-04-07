@@ -1,0 +1,54 @@
+AllCops:
+  TargetRubyVersion: 2.2
+
+# Metrics
+
+Metrics/LineLength:
+  Max: 83
+  Details: >-
+    Line length of 80 is ideal for readability and compatibility; we'll accept
+    an extra 3 for minor edge cases.
+
+Metrics/MethodLength:
+  Max: 35
+
+Metrics/BlockNesting:
+  Max: 5
+
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/PerceivedComplexity:
+  Max: 15
+
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+# Style
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: false
+
+Style/Not:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
+  Enabled: false
