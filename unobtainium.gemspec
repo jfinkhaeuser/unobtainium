@@ -11,6 +11,8 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'unobtainium/version'
 
+# rubocop:disable Style/UnneededPercentQ, Style/ExtraSpacing
+# rubocop:disable Style/SpaceAroundOperators
 Gem::Specification.new do |spec|
   spec.name          = "unobtainium"
   spec.version       = Unobtainium::VERSION
@@ -53,3 +55,6 @@ Gem::Specification.new do |spec|
   #  spec.add_dependency "teelogger", "~> 0.5"
   #  spec.add_dependency "minitest", "~> 5.5"
 end
+# rubocop:enable Style/SpaceAroundOperators
+# rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
+
