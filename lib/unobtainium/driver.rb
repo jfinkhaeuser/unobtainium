@@ -23,13 +23,17 @@ module Unobtainium
       ##
       # Create a driver instance with the given arguments
       def create(*args)
-        Driver.new(*args)
+        new(*args)
       end
+
+      private :new
     end # class << self
 
     ############################################################################
     # Public methods
     attr_reader :label, :options, :impl
+
+    private
 
     ##
     # Initializer
@@ -53,8 +57,6 @@ module Unobtainium
       # Great, instanciate!
       @impl = driver_klass.create(@label, @options)
     end
-
-    private
 
     # Class variables have their place, rubocop... still, err on the strict
     # side and just skip this check here.
