@@ -31,12 +31,18 @@ module Unobtainium
       :[]=, :store,
     ].freeze
 
+    ##
+    # Returns the pattern to split paths at
+    def split_pattern
+      /(?<!\\)#{Regexp.escape(@separator)}/
+    end
+
     (READ_METHODS + WRITE_METHODS).each do |method|
       # Wrap all accessor functions to deal with paths
       define_method(method) do |*args, &block|
         # With any of the dispatch methods, we know that the first argument has
         # to be a key. We'll try to split it by the path separator.
-        components = args[0].to_s.split(/(?<!\\)#{Regexp.escape(@separator)}/)
+        components = args[0].to_s.split(split_pattern)
 
         # This PathedHash is already the leaf-most Hash
         if components.length == 1
