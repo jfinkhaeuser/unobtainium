@@ -33,6 +33,22 @@ module Unobtainium
     # Public methods
     attr_reader :label, :options, :impl
 
+    ##
+    # Map any missing method to the driver implementation
+    def respond_to?(meth)
+      if not @impl.nil? and @impl.respond_to?(meth)
+        return true
+      end
+      return super
+    end
+
+    def method_missing(meth, *args, &block)
+      if not @impl.nil? and @impl.respond_to?(meth)
+        return @impl.send(meth.to_s, *args, &block)
+      end
+      return super
+    end
+
     private
 
     ##
