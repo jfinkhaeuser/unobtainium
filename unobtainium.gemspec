@@ -39,6 +39,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 1.9'
 
+  spec.requirements  = "Either or all of 'selenium-webdriver', 'appium_lib'"
+
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rubocop", "~> 0.39"
 end
