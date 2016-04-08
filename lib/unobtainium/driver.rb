@@ -88,11 +88,11 @@ module Unobtainium
     ##
     # Initializer
     def initialize(*args)
-      # Sanitize options
-      @label, @options = sanitize_options(*args)
-
       # Load drivers
       load_drivers
+
+      # Sanitize options
+      @label, @options = sanitize_options(*args)
 
       # Determine the driver class, if any
       driver_klass = get_driver(@label)
@@ -122,11 +122,24 @@ module Unobtainium
     ].freeze
 
     ##
-    # FIXME
+    # Ensures arguments are according to expectations.
     def sanitize_options(*args)
-      load_drivers
-      require 'pp'
-      pp args
+      if args.empty?
+        raise ArgumentError, "Need at least one argument specifying the driver!"
+      end
+
+      label = args[0].to_sym
+
+      options = nil
+      if args.length > 1
+        if not args[1].is_a? Hash
+          raise ArgumentError, "The second argument is expected to be an options "\
+            "hash!"
+        end
+        options = args[1]
+      end
+
+      return label, options
     end
 
     ##
@@ -144,7 +157,7 @@ module Unobtainium
           require fpath
           klassname = 'Unobtainium::Drivers::' + fname
           klass = Object.const_get(klassname)
-          register_implementation(klass, fpath)
+          Driver.register_implementation(klass, fpath)
         rescue LoadError => err
           raise LoadError, "#{err.message}: unknown problem loading driver, "\
             "aborting!"
