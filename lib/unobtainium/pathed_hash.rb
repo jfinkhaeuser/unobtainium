@@ -50,14 +50,19 @@ module Unobtainium
         # For write methods, we need to create intermediary hashes.
         leaf = recursive_fetch(components, @data,
                                create: WRITE_METHODS.include?(method))
-        begin
-          copy = args.dup
-          copy[0] = components.last
-          return leaf.send(method, *copy, &block)
-        rescue NoMethodError => err
-          raise NoMethodError, "#{err.message}: key path '#{args[0]}' could not "\
-                "be resolved.", err.backtrace
+
+        # If the leaf is nil, we can't send it any method without raising
+        # an error. We'll instead send the method to an empty hash, to mimic
+        # the correct behaviour.
+        if leaf.nil?
+          return {}.send(method, *args, &block)
         end
+
+        # If we have a leaf, we want to send the requested method to that
+        # leaf.
+        copy = args.dup
+        copy[0] = components.last
+        return leaf.send(method, *copy, &block)
       end
     end
 
