@@ -14,9 +14,9 @@ require 'unobtainium/pathed_hash'
 module Unobtainium
   ##
   # The Config class extends PathedHash by two main pieces of functionality:
-  # a) it loads configuration files and turns them into pathed hashes, and
-  # b) it treats environment variables as overriding anything contained in
-  #    the configuration file.
+  # - it loads configuration files and turns them into pathed hashes, and
+  # - it treats environment variables as overriding anything contained in
+  #   the configuration file.
   #
   # For configuration file loading, a named configuration file will be laoaded
   # if present. A file with the same name but '-local' appended before the
