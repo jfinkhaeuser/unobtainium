@@ -7,6 +7,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.2.0)
+    codeclimate-test-reporter (0.5.0)
+      simplecov (>= 0.7.1, < 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
     json (1.8.3)
@@ -47,6 +49,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.11)
+  codeclimate-test-reporter
   rake (~> 11.1)
   rspec (~> 3.4)
   rubocop (~> 0.39)
