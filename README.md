@@ -13,6 +13,7 @@ Some additional useful functionality for the maintenance of test suites is
 also added.
 
 [![Gem Version](https://badge.fury.io/rb/unobtainium.svg)](https://badge.fury.io/rb/unobtainium)
+[![Build status](https://travis-ci.org/jfinkhaeuser/unobtainium.svg?branch=master)](https://travis-ci.org/jfinkhaeuser/unobtainium)
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
