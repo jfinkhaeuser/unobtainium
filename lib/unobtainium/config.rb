@@ -34,7 +34,8 @@ module Unobtainium
   #
   # Note: if your configuration file's top-level structure is an array, it will
   # be returned as a hash with a 'config' key that maps to your file's contents.
-  #
+  # That means that if you are trying to merge a hash with an array config, the
+  # result may be unexpected.
   class Config < PathedHash
     # Very simple YAML parser
     class YAMLParser
@@ -97,29 +98,22 @@ module Unobtainium
         # Load base and local configuration files
         base, config = load_base_config(path)
         _, local_config = load_local_config(base)
-
-        # We can't sensibly merge arrays and hashes, so bail if the two classes
-        # don't match.
-        if config.class != local_config.class
-          raise ArgumentError, "Config file and local override file do not have "\
-                "the same top-level structure (hash or array), and therefore "\
-                "cannot be merged!"
+        if local_config.nil?
+          return Config.new(config)
         end
 
         # Merge
-        if config.is_a? Array
-          config = { ARRAY_KEY => config.push(*local_config) }
-        elsif config.is_a? Hash
-          # rubocop:disable Style/CaseEquality
-          merger = proc do |_, v1, v2|
-            Hash === v1 && Hash === v2 ? v1.merge(v2, &merger) : v2
+        merger = proc do |_, v1, v2|
+          # rubocop:disable Style/GuardClause
+          if v1.is_a? Hash and v2.is_a? Hash
+            next v1.merge(v2, &merger)
+          elsif v1.is_a? Array and v2.is_a? Array
+            next v1 + v2
           end
-          # rubocop:enable Style/CaseEquality
-          config.merge!(local_config, &merger)
-        else
-          raise "Unexpected top-level structure in configuration file: "\
-                "#{config.class}"
+          next v2
+          # rubocop:enable Style/GuardClause
         end
+        config.merge!(local_config, &merger)
 
         return Config.new(config)
       end
@@ -143,7 +137,7 @@ module Unobtainium
         # Parse the contents.
         config = FILE_TO_PARSER[base.extname].parse(contents)
 
-        return base, config
+        return base, hashify(config)
       end
 
       def load_local_config(base)
@@ -151,9 +145,8 @@ module Unobtainium
         local = Pathname.new(base.dirname)
         local = local.join(base.basename(base.extname).to_s + "-local" +
             base.extname)
-        puts local
         if not local.exist?
-          return Config.new(config)
+          return local, nil
         end
 
         # We know the local override file exists, but we do want to let any errors
@@ -163,7 +156,14 @@ module Unobtainium
 
         local_config = FILE_TO_PARSER[base.extname].parse(contents)
 
-        return local, local_config
+        return local, hashify(local_config)
+      end
+
+      def hashify(data)
+        if data.is_a? Array
+          data = { ARRAY_KEY => data }
+        end
+        return data
       end
     end # class << self
   end # class Config
