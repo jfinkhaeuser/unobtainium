@@ -1,16 +1,31 @@
 PATH
   remote: .
   specs:
-    unobtainium (0.0.1)
+    unobtainium (0.0.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.2.0)
+    diff-lcs (1.2.5)
     parser (2.3.0.7)
       ast (~> 2.2)
     powerpack (0.1.1)
     rainbow (2.1.0)
+    rake (11.1.2)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     rubocop (0.39.0)
       parser (>= 2.3.0.7, < 3.0)
       powerpack (~> 0.1)
@@ -25,6 +40,8 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.11)
+  rake (~> 11.1)
+  rspec (~> 3.4)
   rubocop (~> 0.39)
   unobtainium!
 
