@@ -30,4 +30,11 @@ describe ::Unobtainium::Config do
     expect(cfg["foo.baz"]).to eql 3.14
     expect(cfg["blargh"]).to eql false
   end
+
+  it "merges an array config correctly" do
+    config = File.join(@data_path, 'arraymerge.yaml')
+    cfg = ::Unobtainium::Config.load_config(config)
+
+    expect(cfg["config"]).to eql %w(foo bar baz)
+  end
 end
