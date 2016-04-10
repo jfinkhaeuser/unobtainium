@@ -52,3 +52,6 @@ Style/IfUnlessModifier:
 
 Style/TrailingCommaInLiteral:
   Enabled: false
+
+Style/FirstParameterIndentation:
+  Enabled: false
