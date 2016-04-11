@@ -1,0 +1,6 @@
+---
+drivers:
+  firefox:
+  android:
+    browser: chrome
+driver: firefox
