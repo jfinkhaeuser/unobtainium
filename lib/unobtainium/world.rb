@@ -61,8 +61,18 @@ module Unobtainium
       key = "driver-#{key}"
 
       # Only create a driver with this exact configuration once
-      return ::Unobtainium::Runtime.instance.store_with_if(key) do
+      dtor = ::Unobtainium::World.method(:driver_destructor)
+      return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
         ::Unobtainium::Driver.create(label, options)
+      end
+    end
+
+    class << self
+      def driver_destructor(the_driver = nil)
+        if the_driver.nil?
+          return
+        end
+        the_driver.close
       end
     end
   end # module World
