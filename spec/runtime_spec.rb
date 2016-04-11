@@ -99,9 +99,12 @@ describe ::Unobtainium::Runtime do
 
   it "does not overwrite objects with :store_with_if" do
     ::Unobtainium::Runtime.instance.store("foo", 42)
+    called = false
     ::Unobtainium::Runtime.instance.store_with_if("foo") do
+      called = true
       123
     end
     expect(::Unobtainium::Runtime.instance.fetch("foo")).to eql 42
+    expect(called).to be_falsy
   end
 end
