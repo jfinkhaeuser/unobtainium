@@ -7,7 +7,7 @@ end # class FakeDriver
 
 describe ::Unobtainium::Driver do
   before :each do
-    ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__)
+    ::Unobtainium::Driver.register_implementation(MockDriver, "mock_driver.rb")
   end
 
   it "refuses to register a driver with missing methods" do
@@ -18,7 +18,7 @@ describe ::Unobtainium::Driver do
 
   it "refuses to register the same driver twice from different locations" do
     expect do
-      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + "foo")
+      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__)
     end.to raise_error(LoadError)
   end
 
