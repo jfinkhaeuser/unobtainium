@@ -160,6 +160,9 @@ module Unobtainium
       end
 
       def hashify(data)
+        if data.nil?
+          return {}
+        end
         if data.is_a? Array
           data = { ARRAY_KEY => data }
         end

@@ -73,4 +73,10 @@ describe ::Unobtainium::Config do
     expect(cfg["foo"]).to eql "bar"
     expect(cfg["baz"]).to eql "override"
   end
+
+  it "treats an empty YAML file as an empty hash" do
+    config = File.join(@data_path, 'empty.yml')
+    cfg = ::Unobtainium::Config.load_config(config)
+    expect(cfg).to be_empty
+  end
 end
