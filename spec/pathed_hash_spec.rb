@@ -54,4 +54,10 @@ describe ::Unobtainium::PathedHash do
     ph["foo.bar"] = 42
     expect(ph["foo.bar"]).to eql 42
   end
+
+  it "has the same string representation as the hash it's initialized from" do
+    h = { foo: 42 }
+    ph = ::Unobtainium::PathedHash.new(h)
+    expect(ph.to_s).to eql h.to_s
+  end
 end
