@@ -138,8 +138,7 @@ module Unobtainium
     # Destroy the given object with the destructor provided.
     def destroy(object, destructor)
       if not destructor.nil?
-        destructor.call
-        return
+        return destructor.call(object)
       end
 
       if not object.respond_to?(:destroy)
