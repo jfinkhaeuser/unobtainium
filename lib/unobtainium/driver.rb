@@ -132,7 +132,7 @@ module Unobtainium
 
       options = nil
       if args.length > 1
-        if not args[1].is_a? Hash
+        if not args[1].nil? and not args[1].is_a? Hash
           raise ArgumentError, "The second argument is expected to be an options "\
             "hash!"
         end
