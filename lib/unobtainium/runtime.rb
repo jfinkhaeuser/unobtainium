@@ -80,6 +80,24 @@ module Unobtainium
     end
 
     ##
+    # Like :store, but only stores the object if none exists for that key yet.
+    def store_if(name, object, destructor = nil)
+      if has?(name)
+        return self[name]
+      end
+      return store(name, object, destructor)
+    end
+
+    ##
+    # Like :store_if, but as a block version similar to :store_with.
+    def store_with_if(name, destructor = nil, &block)
+      if has?(name)
+        return self[name]
+      end
+      return store_with(name, destructor, &block)
+    end
+
+    ##
     # Deletes (and destroys) any object found under the given name.
     def delete(name)
       if not @objects.key?(name)

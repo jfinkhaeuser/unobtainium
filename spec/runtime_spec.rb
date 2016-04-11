@@ -78,4 +78,30 @@ describe ::Unobtainium::Runtime do
     expect { ::Unobtainium::Runtime.instance.fetch("_nope_") }.to raise_error(
         KeyError)
   end
+
+  it "stores objects with :store_if" do
+    ::Unobtainium::Runtime.instance.store_if("store_if", 42)
+    expect(::Unobtainium::Runtime.instance.fetch("store_if")).to eql 42
+  end
+
+  it "does not overwrite objects with :store_if" do
+    ::Unobtainium::Runtime.instance.store("foo", 42)
+    ::Unobtainium::Runtime.instance.store_if("foo", 123)
+    expect(::Unobtainium::Runtime.instance.fetch("foo")).to eql 42
+  end
+
+  it "stores objects with :store_with_if" do
+    ::Unobtainium::Runtime.instance.store_with_if("store_with_if") do
+      42
+    end
+    expect(::Unobtainium::Runtime.instance.fetch("store_with_if")).to eql 42
+  end
+
+  it "does not overwrite objects with :store_with_if" do
+    ::Unobtainium::Runtime.instance.store("foo", 42)
+    ::Unobtainium::Runtime.instance.store_with_if("foo") do
+      123
+    end
+    expect(::Unobtainium::Runtime.instance.fetch("foo")).to eql 42
+  end
 end
