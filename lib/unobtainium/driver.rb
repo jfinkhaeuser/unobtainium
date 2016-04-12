@@ -61,6 +61,83 @@ module Unobtainium
       end
 
       private :new
+
+      ##
+      # Ensures arguments are according to expectations.
+      def sanitize_options(*args)
+        if args.empty?
+          raise ArgumentError, "Need at least one argument specifying the driver!"
+        end
+
+        label = args[0].to_sym
+
+        options = nil
+        if args.length > 1
+          if not args[1].nil? and not args[1].is_a? Hash
+            raise ArgumentError, "The second argument is expected to be an "\
+              "options hash!"
+          end
+          options = args[1]
+        end
+
+        # Determine the driver class, if any
+        load_drivers
+
+        driver_klass = get_driver(label)
+        if not driver_klass
+          raise LoadError, "No driver implementation matching #{@label} found, "\
+            "aborting!"
+        end
+
+        # Sanitize options according to the driver's idea
+        if driver_klass.respond_to?(:sanitize_options)
+          label, options = driver_klass.sanitize_options(label, options)
+        end
+
+        return label, options
+      end
+
+      ##
+      # Load drivers; this loads all driver implementations included in this gem.
+      # You can register external implementations with the :register_implementation
+      # method.
+      def load_drivers
+        pattern = File.join(File.dirname(__FILE__), 'drivers', '*.rb')
+        Dir.glob(pattern).each do |fpath|
+          # Determine class name from file name
+          fname = File.basename(fpath, '.rb')
+          fname = fname.split('_').map(&:capitalize).join
+
+          begin
+            require fpath
+            klassname = 'Unobtainium::Drivers::' + fname
+            klass = Object.const_get(klassname)
+            Driver.register_implementation(klass, fpath)
+          rescue LoadError => err
+            raise LoadError, "#{err.message}: unknown problem loading driver, "\
+              "aborting!"
+          rescue NameError => err
+            raise LoadError, "#{err.message}: unknown problem loading driver, "\
+              "aborting!"
+          end
+        end
+      end
+
+      ##
+      # Out of the loaded drivers, returns the one matching the label (if any)
+      def get_driver(label)
+        # Of all the loaded classes, choose the first (unsorted) to match the
+        # requested driver label
+        impl = nil
+        @@drivers.keys.each do |klass|
+          if klass.matches?(label)
+            impl = klass
+            break
+          end
+        end
+
+        return impl
+      end
     end # class << self
 
     ############################################################################
@@ -89,13 +166,14 @@ module Unobtainium
     # Initializer
     def initialize(*args)
       # Load drivers
-      load_drivers
+      ::Unobtainium::Driver.load_drivers
 
       # Sanitize options
-      @label, @options = sanitize_options(*args)
+      @label, @options = ::Unobtainium::Driver.sanitize_options(*args)
 
-      # Determine the driver class, if any
-      driver_klass = get_driver(@label)
+      # Get the driver class. We kind of know this works because
+      # sanitize_options does the same, but let's be strict.
+      driver_klass = ::Unobtainium::Driver.get_driver(label)
       if not driver_klass
         raise LoadError, "No driver implementation matching #{@label} found, "\
           "aborting!"
@@ -120,68 +198,5 @@ module Unobtainium
       :ensure_preconditions,
       :create
     ].freeze
-
-    ##
-    # Ensures arguments are according to expectations.
-    def sanitize_options(*args)
-      if args.empty?
-        raise ArgumentError, "Need at least one argument specifying the driver!"
-      end
-
-      label = args[0].to_sym
-
-      options = nil
-      if args.length > 1
-        if not args[1].nil? and not args[1].is_a? Hash
-          raise ArgumentError, "The second argument is expected to be an options "\
-            "hash!"
-        end
-        options = args[1]
-      end
-
-      return label, options
-    end
-
-    ##
-    # Load drivers; this loads all driver implementations included in this gem.
-    # You can register external implementations with the :register_implementation
-    # method.
-    def load_drivers
-      pattern = File.join(File.dirname(__FILE__), 'drivers', '*.rb')
-      Dir.glob(pattern).each do |fpath|
-        # Determine class name from file name
-        fname = File.basename(fpath, '.rb')
-        fname = fname.split('_').map(&:capitalize).join
-
-        begin
-          require fpath
-          klassname = 'Unobtainium::Drivers::' + fname
-          klass = Object.const_get(klassname)
-          Driver.register_implementation(klass, fpath)
-        rescue LoadError => err
-          raise LoadError, "#{err.message}: unknown problem loading driver, "\
-            "aborting!"
-        rescue NameError => err
-          raise LoadError, "#{err.message}: unknown problem loading driver, "\
-            "aborting!"
-        end
-      end
-    end
-
-    ##
-    # Out of the loaded drivers, returns the one matching the label (if any)
-    def get_driver(label)
-      # Of all the loaded classes, choose the first (unsorted) to match the
-      # requested driver label
-      impl = nil
-      @@drivers.keys.each do |klass|
-        if klass.matches?(label)
-          impl = klass
-          break
-        end
-      end
-
-      return impl
-    end
   end # class Driver
 end # module Unobtainium
