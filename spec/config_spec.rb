@@ -79,4 +79,30 @@ describe ::Unobtainium::Config do
     cfg = ::Unobtainium::Config.load_config(config)
     expect(cfg).to be_empty
   end
+
+  it "extends configuration hashes" do
+    config = File.join(@data_path, 'driverconfig.yml')
+    cfg = ::Unobtainium::Config.load_config(config)
+
+    # First, test for non-extended values
+    expect(cfg["drivers.root.rootoption"]).to eql 42
+    expect(cfg["drivers.branch1.branch1option"]).to eql "foo"
+    expect(cfg["drivers.branch2.branch2option"]).to eql "bar"
+    expect(cfg["drivers.leaf.leafoption"]).to eql "baz"
+
+    # Now test extended values
+    expect(cfg["drivers.branch1.rootoption"]).to eql 42
+    expect(cfg["drivers.branch2.rootoption"]).to eql 42
+    expect(cfg["drivers.leaf.rootoption"]).to eql 42
+
+    expect(cfg["drivers.branch2.branch1option"]).to eql "foo"
+    expect(cfg["drivers.leaf.branch1option"]).to eql "override" # not "foo" !
+
+    expect(cfg["drivers.leaf.branch2option"]).to eql "bar"
+
+    # Also test that all levels go back to base == root
+    expect(cfg["drivers.branch1.base"]).to eql 'root'
+    expect(cfg["drivers.branch2.base"]).to eql 'root'
+    expect(cfg["drivers.leaf.base"]).to eql 'root'
+  end
 end

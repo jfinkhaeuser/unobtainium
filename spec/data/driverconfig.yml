@@ -1,0 +1,23 @@
+# the hierarchy is root -> branch1 -> branch2 -> leaf
+#
+# We test
+# a) having a base before its derived by ordering root before branch1
+# b) having a base after its derived by ordering branch2 after leaf
+# c) overrides by having leaf override the option from branch1
+#
+# so the order in this file has to be root -> branch2 -> branch1 -> leaf
+---
+drivers:
+  root:
+    rootoption: 42
+  branch2:
+    extends: branch1
+    branch2option: bar
+  branch1:
+    extends: root
+    branch1option: foo
+  leaf:
+    extends: branch2
+    leafoption: baz
+    branch1option: override
+driver: derived

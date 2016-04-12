@@ -94,28 +94,23 @@ module Unobtainium
       ##
       # Loads a configuration file with the given file name. The format is
       # detected based on one of the extensions in FILE_TO_PARSER.
-      def load_config(path)
+      def load_config(path, resolve_extensions = true)
         # Load base and local configuration files
         base, config = load_base_config(path)
         _, local_config = load_local_config(base)
-        if local_config.nil?
-          return Config.new(config)
+
+        # Merge local configuration
+        config.recursive_merge!(local_config)
+
+        # Create config from the result
+        cfg = Config.new(config)
+
+        # Now resolve config hashes that extend other hashes.
+        if resolve_extensions
+          cfg.resolve_extensions!
         end
 
-        # Merge
-        merger = proc do |_, v1, v2|
-          # rubocop:disable Style/GuardClause
-          if v1.is_a? Hash and v2.is_a? Hash
-            next v1.merge(v2, &merger)
-          elsif v1.is_a? Array and v2.is_a? Array
-            next v1 + v2
-          end
-          next v2
-          # rubocop:enable Style/GuardClause
-        end
-        config.merge!(local_config, &merger)
-
-        return Config.new(config)
+        return cfg
       end
 
       private
@@ -137,7 +132,7 @@ module Unobtainium
         # Parse the contents.
         config = FILE_TO_PARSER[base.extname].parse(contents)
 
-        return base, hashify(config)
+        return base, PathedHash.new(hashify(config))
       end
 
       def load_local_config(base)
@@ -156,7 +151,7 @@ module Unobtainium
 
         local_config = FILE_TO_PARSER[base.extname].parse(contents)
 
-        return local, hashify(local_config)
+        return local, PathedHash.new(hashify(local_config))
       end
 
       def hashify(data)
@@ -169,5 +164,111 @@ module Unobtainium
         return data
       end
     end # class << self
+
+    ##
+    # Resolve extensions in configuration hashes. If your hash contains e.g.:
+    #
+    #   foo:
+    #     bar:
+    #       some: value
+    #     baz:
+    #       extends: bar
+    #
+    # Then 'foo.baz.some' will equal 'value' after resolving extensions. Note
+    # that :load_config calls this function, so normally you don't need to call
+    # it yourself. You can switch this behaviour off in :load_config.
+    #
+    # Note that this process has some intended side-effects:
+    # 1) If a hash can't be extended because the base cannot be found, an error
+    #    is raised.
+    # 2) If a hash got successfully extended, the :extends keyword itself is
+    #    removed from the hash.
+    # 3) In a successfully extended hash, an :base keyword, which contains
+    #    the name of the base. In case of multiple recursive extensions, the
+    #    final base is stored here.
+    #
+    # Also note that all of this means that :extends and :base are reserved
+    # keywords that cannot be used in configuration files other than for this
+    # purpose!
+    def resolve_extensions!
+      recursive_merge("", "")
+    end
+
+    def resolve_extensions
+      dup.resolve_extensions!
+    end
+
+    private
+
+    def recursive_merge(parent, key)
+      loop do
+        full_key = "#{parent}#{separator}#{key}"
+
+        # Recurse down to the remaining root of the hierarchy
+        base = full_key
+        derived = nil
+        loop do
+          new_base, new_derived = resolve_extension(parent, base)
+
+          if new_derived.nil?
+            break
+          end
+
+          base = new_base
+          derived = new_derived
+        end
+
+        # If recursion found nothing to merge, we're done!
+        if derived.nil?
+          break
+        end
+
+        # Otherwise, merge what needs merging and continue
+        merge_extension(base, derived)
+      end
+    end
+
+    def resolve_extension(grandparent, parent)
+      fetch(parent, {}).each do |key, value|
+        # Recurse into hashe values
+        if value.is_a? Hash
+          recursive_merge(parent, key)
+        end
+
+        # No hash, ignore any keys other than the special "extends" key
+        if key != "extends"
+          next
+        end
+
+        # If the key is "extends", return a normalized version of its value.
+        full_value = value.dup
+        if not full_value.start_with?(separator)
+          full_value = "#{grandparent}#{separator}#{value}"
+        end
+
+        if full_value == parent
+          next
+        end
+        return full_value, parent
+      end
+
+      return nil, nil
+    end
+
+    def merge_extension(base, derived)
+      # Remove old 'extends' key, but remember the value
+      extends = self[derived]["extends"]
+      self[derived].delete("extends")
+
+      # Recursively merge base into derived without overwriting
+      self[derived].extend(::Unobtainium::RecursiveMerge)
+      self[derived].recursive_merge!(self[base], false)
+
+      # Then set the "base" keyword, but only if it's not yet set.
+      if not self[derived]["base"].nil?
+        return
+      end
+      self[derived]["base"] = extends
+    end
   end # class Config
 end # module Unobtainium
