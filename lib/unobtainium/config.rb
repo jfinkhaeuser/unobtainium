@@ -230,7 +230,7 @@ module Unobtainium
 
     def resolve_extension(grandparent, parent)
       fetch(parent, {}).each do |key, value|
-        # Recurse into hashe values
+        # Recurse into hash values
         if value.is_a? Hash
           recursive_merge(parent, key)
         end
