@@ -20,4 +20,4 @@ drivers:
     extends: branch2
     leafoption: baz
     branch1option: override
-driver: derived
+driver: leaf

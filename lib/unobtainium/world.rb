@@ -53,6 +53,12 @@ module Unobtainium
         options = config["drivers.#{label}"]
       end
 
+      # The merged/extended options might define a "base"; that's the label
+      # we need to use.
+      if not options["base"].nil?
+        label = options["base"]
+      end
+
       # The driver may modify the options; if so, we should let it do that
       # here. That way our key (below) is based on the expanded options.
       label, options = ::Unobtainium::Driver.sanitize_options(label, options)
