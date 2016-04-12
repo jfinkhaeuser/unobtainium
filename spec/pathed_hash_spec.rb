@@ -13,6 +13,11 @@ describe ::Unobtainium::PathedHash do
       expect(ph.empty?).to eql false
       expect(ph[:foo]).to eql 42
     end
+
+    it "can be constructed with a nil value" do
+      ph = ::Unobtainium::PathedHash.new(nil)
+      expect(ph.empty?).to eql true
+    end
   end
 
   describe "Hash-like" do
@@ -49,6 +54,20 @@ describe ::Unobtainium::PathedHash do
     expect(ph["bar.nope"]).to eql nil
   end
 
+  it "treats a single separator as the root" do
+    sample = { "foo" => 42 }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph[ph.separator]["foo"]).to eql 42
+  end
+
+  it "treats an empty path as the root" do
+    sample = { "foo" => 42 }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph[""]["foo"]).to eql 42
+  end
+
   it "can recursively write entries via a path" do
     ph = ::Unobtainium::PathedHash.new
     ph["foo.bar"] = 42
@@ -73,5 +92,45 @@ describe ::Unobtainium::PathedHash do
 
     expect(ph["bar.baz"]).to eql "quux"
     expect(ph[".bar.baz"]).to eql "quux"
+  end
+
+  it "recursively merges with overwriting" do
+    sample1 = {
+      "foo" => {
+        "bar" => 42,
+        "baz" => "quux",
+      }
+    }
+    sample2 = {
+      "foo" => {
+        "baz" => "override"
+      }
+    }
+
+    ph1 = ::Unobtainium::PathedHash.new(sample1)
+    ph2 = ph1.recursive_merge(sample2)
+
+    expect(ph2["foo.bar"]).to eql 42
+    expect(ph2["foo.baz"]).to eql "override"
+  end
+
+  it "recursively merges without overwriting" do
+    sample1 = {
+      "foo" => {
+        "bar" => 42,
+        "baz" => "quux",
+      }
+    }
+    sample2 = {
+      "foo" => {
+        "baz" => "override"
+      }
+    }
+
+    ph1 = ::Unobtainium::PathedHash.new(sample1)
+    ph2 = ph1.recursive_merge(sample2, false)
+
+    expect(ph2["foo.bar"]).to eql 42
+    expect(ph2["foo.baz"]).to eql "quux"
   end
 end

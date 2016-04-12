@@ -7,6 +7,8 @@
 # All rights reserved.
 #
 
+require 'unobtainium/recursive_merge'
+
 module Unobtainium
 
   ##
@@ -14,10 +16,16 @@ module Unobtainium
   # regular access, i.e. instead of h["first"]["second"] you can write
   # h["first.second"]
   class PathedHash
+    include RecursiveMerge
+
     ##
     # Initializer
     def initialize(init = {})
-      @data = init
+      if init.nil?
+        @data = {}
+      else
+        @data = init.dup
+      end
       @separator = '.'
     end
 
@@ -44,15 +52,29 @@ module Unobtainium
         # to be a key. We'll try to split it by the path separator.
         components = args[0].to_s.split(split_pattern)
         loop do
-          if not components[0].empty?
+          if components.empty? or not components[0].empty?
             break
           end
           components.shift
         end
 
+        # If there are no components, return self/the root
+        if components.empty?
+          return self
+        end
+
         # This PathedHash is already the leaf-most Hash
         if components.length == 1
-          return @data.send(method, *args, &block)
+          # Weird edge case: if we didn't have to shift anything, then it's
+          # possible we inadvertently changed a symbol key into a string key,
+          # which could mean looking fails.
+          # We can detect that by comparing copy[0] to a symbolized version of
+          # components[0].
+          copy = args.dup
+          if copy[0] != components[0].to_sym
+            copy[0] = components[0]
+          end
+          return @data.send(method, *copy, &block)
         end
 
         # Deal with other paths. The frustrating part here is that for nested
@@ -62,13 +84,6 @@ module Unobtainium
         # For write methods, we need to create intermediary hashes.
         leaf = recursive_fetch(components, @data,
                                create: WRITE_METHODS.include?(method))
-
-        # If the leaf is nil, we can't send it any method without raising
-        # an error. We'll instead send the method to an empty hash, to mimic
-        # the correct behaviour.
-        if leaf.nil?
-          return {}.send(method, *args, &block)
-        end
 
         # If we have a leaf, we want to send the requested method to that
         # leaf.
@@ -80,6 +95,16 @@ module Unobtainium
 
     def to_s
       @data.to_s
+    end
+
+    def dup
+      PathedHash.new(@data.dup)
+    end
+
+    def merge!(*args, &block)
+      # FIXME: we may need other methods like this. This is used by
+      #        RecursiveMerge, so we know it's required.
+      PathedHash.new(super)
     end
 
     ##
