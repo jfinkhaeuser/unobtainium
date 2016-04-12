@@ -19,6 +19,7 @@ module Unobtainium
         safari: [],
         chrome: [],
         chromium: [],
+        remote: [],
       }.freeze
 
       class << self
@@ -40,9 +41,25 @@ module Unobtainium
         end
 
         ##
+        # Selenium really wants symbol keys for the options
+        def sanitize_options(label, options)
+          new_opts = {}
+
+          if not options.nil?
+            options.each do |key, value|
+              new_opts[key.to_sym] = value
+            end
+          end
+
+          options = new_opts
+
+          return label, options
+        end
+
+        ##
         # Create and return a driver instance
-        def create(label, _)
-          driver = ::Selenium::WebDriver.for(normalize_label(label))
+        def create(label, options)
+          driver = ::Selenium::WebDriver.for(normalize_label(label), options)
           return driver
         end
 
