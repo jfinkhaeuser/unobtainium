@@ -60,4 +60,18 @@ describe ::Unobtainium::PathedHash do
     ph = ::Unobtainium::PathedHash.new(h)
     expect(ph.to_s).to eql h.to_s
   end
+
+  it "understands absolute paths (starting with separator)" do
+    sample = {
+      "foo" => 42,
+      "bar" => {
+        "baz" => "quux",
+        "blah" => [1, 2],
+      }
+    }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph["bar.baz"]).to eql "quux"
+    expect(ph[".bar.baz"]).to eql "quux"
+  end
 end

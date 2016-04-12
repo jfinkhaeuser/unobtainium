@@ -43,6 +43,12 @@ module Unobtainium
         # With any of the dispatch methods, we know that the first argument has
         # to be a key. We'll try to split it by the path separator.
         components = args[0].to_s.split(split_pattern)
+        loop do
+          if not components[0].empty?
+            break
+          end
+          components.shift
+        end
 
         # This PathedHash is already the leaf-most Hash
         if components.length == 1
