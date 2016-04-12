@@ -49,8 +49,8 @@ module Unobtainium
         end
 
         ##
-        # Create and return a driver instance
-        def create(label, options)
+        # Sanitize options, and expand the :browser key, if present.
+        def sanitize_options(label, options)
           # The label specifies the platform, if no other platform is given.
           normalized = normalize_label(label)
 
@@ -68,6 +68,14 @@ module Unobtainium
           # If no app is given, but a browser is requested, we can supplement
           # some information
           options = supplement_browser(options)
+
+          return label, options
+        end
+
+        ##
+        # Create and return a driver instance
+        def create(label, options)
+          _, options = sanitize_options(label, options)
 
           # Create the driver
           driver = ::Appium::Driver.new(options).start_driver
@@ -106,6 +114,9 @@ module Unobtainium
             return options
           end
 
+          # We have data, so we can remove the browser key itself
+          options.delete('browser')
+
           # We do have to check that we're not overwriting any of the keys.
           data.keys.each do |key|
             key_s = key.to_s
@@ -114,7 +125,7 @@ module Unobtainium
             end
             raise ArgumentError, "You specified the browser option as, "\
               "'#{options['browser']}', but you also have the key "\
-              "'#{key}' set in your requested capabilities. Use one or the"\
+              "'#{key}' set in your requested capabilities. Use one or the "\
               "other."
           end
 
