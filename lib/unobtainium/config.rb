@@ -71,7 +71,10 @@ module Unobtainium
         # and see if that environment variable is set.
         env_name = args[0].to_s.upcase.gsub(split_pattern, '_')
         puts "env: #{env_name}"
-        contents = ENV[env_name]
+        contents = nil
+        if env_name != '_'
+          contents = ENV[env_name]
+        end
         puts "contents: #{contents}"
 
         # No environment variable set? Fine, just do the usual thing.
