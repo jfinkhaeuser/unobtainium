@@ -69,6 +69,7 @@ module Unobtainium
 
         # If there are no components, return self/the root
         if components.empty?
+          puts "RETURNING: #{self}"
           return self
         end
         puts "C3: #{components}"
