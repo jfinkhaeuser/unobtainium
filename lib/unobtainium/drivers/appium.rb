@@ -27,8 +27,7 @@ module Unobtainium
       BROWSER_MATCHES = {
         android: {
           chrome: {
-            appPackage: 'com.android.chrome',
-            appActivity: 'com.google.android.apps.chrome.Main',
+            browserName: 'Chrome',
           },
         },
       }.freeze
