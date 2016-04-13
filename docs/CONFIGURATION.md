@@ -139,7 +139,7 @@ $ DRIVER=chrome bundle exec my_tests
 
 ### Mobile
 
-When running mobile test suites, (Appium)[https://github.com/appium/appium]
+When running mobile test suites, [Appium](https://github.com/appium/appium)
 requires that you identify the app and/or device you want to run tests against.
 
 That typically means specifying parts of a configuration that is applicable to
@@ -169,7 +169,7 @@ drivers:
 
 The tests can be run on device/browser farms. Typically you only need to
 configure drivers, much like for mobile testing. The following example
-is for (TestingBot)[https://testingbot.com]. Note that each farm expects
+is for [TestingBot](https://testingbot.com). Note that each farm expects
 different configuration keys for selecting browsers and for authentication.
 
 ```yaml
