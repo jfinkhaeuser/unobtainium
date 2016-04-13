@@ -61,7 +61,6 @@ module Unobtainium
       define_method(method) do |*args, &block|
         # If there are no arguments, there's nothing to do with paths. Just
         # delegate to the hash.
-        puts "args: #{args}"
         if args.empty?
           return super(*args, &block)
         end
@@ -70,12 +69,10 @@ module Unobtainium
         # will just transform it to the matching environment variable name,
         # and see if that environment variable is set.
         env_name = args[0].to_s.upcase.gsub(split_pattern, '_')
-        puts "env: #{env_name}"
         contents = nil
         if env_name != '_'
           contents = ENV[env_name]
         end
-        puts "contents: #{contents}"
 
         # No environment variable set? Fine, just do the usual thing.
         if contents.nil? or contents.empty?
@@ -241,7 +238,6 @@ module Unobtainium
     end
 
     def resolve_extension(grandparent, parent)
-      puts "ABOUT TO FETCH: #{parent} from #{self}"
       fetch(parent, {}).each do |key, value|
         # Recurse into hash values
         if value.is_a? Hash
