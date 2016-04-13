@@ -4,3 +4,4 @@ drivers:
   android:
     browser: chrome
 driver: firefox
+at_end: quit
