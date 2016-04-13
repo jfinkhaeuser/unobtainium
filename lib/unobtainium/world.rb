@@ -55,7 +55,7 @@ module Unobtainium
 
       # The merged/extended options might define a "base"; that's the label
       # we need to use.
-      if not options["base"].nil?
+      if not options.nil? and not options["base"].nil?
         label = options["base"]
       end
 
@@ -70,19 +70,21 @@ module Unobtainium
       key = Digest::SHA1.hexdigest(key.to_s)
       key = "driver-#{key}"
 
-      # Only create a driver with this exact configuration once
-      dtor = ::Unobtainium::World.method(:driver_destructor)
-      return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
-        ::Unobtainium::Driver.create(label, options)
-      end
-    end
-
-    class << self
-      def driver_destructor(the_driver = nil)
+      # Only create a driver with this exact configuration once. Unfortunately
+      # We'll have to bind the destructor to whatever configuration exists at
+      # this point in time, so we have to create a proc here - whether the Driver
+      # gets created or not.
+      at_end = config.fetch("at_end", "quit")
+      dtor = proc do |the_driver|
         if the_driver.nil?
           return
         end
-        the_driver.close
+
+        meth = at_end.to_sym
+        the_driver.send(meth)
+      end
+      return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
+        ::Unobtainium::Driver.create(label, options)
       end
     end
   end # module World
