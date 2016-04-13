@@ -3,5 +3,12 @@ drivers:
   firefox:
   android:
     browser: chrome
+  android_remote:
+    extends: remote
+    desired_capabilities:
+      platform: "ANDROID"
+      browserName: "galaxy_nexus"
+  remote:
+    url: "http://hub.testingbot.com:4444/wd/hub"
 driver: firefox
 at_end: quit
