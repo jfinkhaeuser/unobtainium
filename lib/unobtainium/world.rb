@@ -57,6 +57,12 @@ module Unobtainium
       # we need to use.
       if not options.nil? and not options["base"].nil?
         label = options["base"]
+
+        # Unfortunately, the "base" key may not be recognized by the drivers,
+        # which could lead to errors down the road. Let's remove it; it's reserved
+        # by the Config class, so drivers can't use it anyhow.
+        options = options.dup
+        options.delete("base")
       end
 
       # The driver may modify the options; if so, we should let it do that
