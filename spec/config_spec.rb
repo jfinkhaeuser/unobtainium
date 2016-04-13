@@ -105,4 +105,15 @@ describe ::Unobtainium::Config do
     expect(cfg["drivers.branch2.base"]).to eql 'mock'
     expect(cfg["drivers.leaf.base"]).to eql 'mock'
   end
+
+  it "extends configuration hashes when the base does not exist" do
+    config = File.join(@data_path, 'driverconfig.yml')
+    cfg = ::Unobtainium::Config.load_config(config)
+
+    # Ensure the hash contains its own value
+    expect(cfg["drivers.base_does_not_exist.some"]).to eql "value"
+
+    # Also ensure the "base" is set properly
+    expect(cfg["drivers.base_does_not_exist.base"]).to eql "nonexistent_base"
+  end
 end
