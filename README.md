@@ -37,7 +37,7 @@ the `Unobtainium::World` module.
 - The `Runtime` class is a singleton and a `Hash`-like container (but simpler),
   that destroys all of its contents at the end of a script, calling custom
   destructors if required. That allows for clean teardown and avoids everything
-  to have to implement the Singleton pattern itself.
+  having to implement the Singleton pattern itself.
 - The `Driver` class, of course, wraps either of Appium or Selenium drivers:
   ```ruby
   drv = Driver.create(:firefox) # uses Selenium
