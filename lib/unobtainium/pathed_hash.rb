@@ -48,6 +48,12 @@ module Unobtainium
     (READ_METHODS + WRITE_METHODS).each do |method|
       # Wrap all accessor functions to deal with paths
       define_method(method) do |*args, &block|
+        # If there are no arguments, there's nothing to do with paths. Just
+        # delegate to the hash.
+        if args.empty?
+          return @data.send(method, *args, &block)
+        end
+
         # With any of the dispatch methods, we know that the first argument has
         # to be a key. We'll try to split it by the path separator.
         components = args[0].to_s.split(split_pattern)

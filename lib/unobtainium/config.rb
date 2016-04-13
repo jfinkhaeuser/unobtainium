@@ -59,14 +59,20 @@ module Unobtainium
       # Wrap all read functions into something that checks for environment
       # variables first.
       define_method(method) do |*args, &block|
+        # If there are no arguments, there's nothing to do with paths. Just
+        # delegate to the hash.
+        if args.empty?
+          return super(*args, &block)
+        end
+
         # We'll make it rather simple: since the first argument is a key, we
         # will just transform it to the matching environment variable name,
         # and see if that environment variable is set.
-        env_name = args[0].upcase.gsub(split_pattern, '_')
+        env_name = args[0].to_s.upcase.gsub(split_pattern, '_')
         contents = ENV[env_name]
 
         # No environment variable set? Fine, just do the usual thing.
-        if contents.nil?
+        if contents.nil? or contents.empty?
           return super(*args, &block)
         end
 
@@ -231,6 +237,8 @@ module Unobtainium
     def resolve_extension(grandparent, parent)
       puts "SELF: #{self}"
       puts "PARENT: #{parent}"
+      puts "FETCH: #{method(:fetch)}"
+      puts "FETCH: #{method(:fetch).source_location}"
       fetch(parent, {}).each do |key, value|
         # Recurse into hash values
         if value.is_a? Hash
