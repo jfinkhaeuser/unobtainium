@@ -30,11 +30,10 @@ the `Unobtainium::World` module.
   h = PathedHash.new { "foo" => { "bar" => 42 }}
   h["foo.bar"] == 42 # true
   ```
-- The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
-  initialize itself with values, and allows config paths to be overridden by
-  environment variables: `FOO_BAR` overrides the "foo.bar" path.
 
-  You can use JSON as environment variable values.
+- The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
+  initialize itself with values. See the documentation on (configuration features)[docs/CONFIGURATION.md]
+  for details
 - The `Runtime` class is a singleton and a `Hash`-like container (but simpler),
   that destroys all of its contents at the end of a script, calling custom
   destructors if required. That allows for clean teardown and avoids everything
