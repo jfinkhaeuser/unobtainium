@@ -32,7 +32,7 @@ the `Unobtainium::World` module.
   ```
 
 - The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
-  initialize itself with values. See the documentation on (configuration features)[docs/CONFIGURATION.md]
+  initialize itself with values. See the documentation on [configuration features](docs/CONFIGURATION.md)
   for details
 - The `Runtime` class is a singleton and a `Hash`-like container (but simpler),
   that destroys all of its contents at the end of a script, calling custom
