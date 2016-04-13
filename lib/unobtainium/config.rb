@@ -235,10 +235,6 @@ module Unobtainium
     end
 
     def resolve_extension(grandparent, parent)
-      puts "SELF: #{self}"
-      puts "PARENT: #{parent}"
-      puts "FETCH: #{method(:fetch)}"
-      puts "FETCH: #{method(:fetch).source_location}"
       fetch(parent, {}).each do |key, value|
         # Recurse into hash values
         if value.is_a? Hash

@@ -50,6 +50,7 @@ module Unobtainium
       define_method(method) do |*args, &block|
         # If there are no arguments, there's nothing to do with paths. Just
         # delegate to the hash.
+        puts "ARGS: #{args}"
         if args.empty?
           return @data.send(method, *args, &block)
         end
@@ -57,17 +58,20 @@ module Unobtainium
         # With any of the dispatch methods, we know that the first argument has
         # to be a key. We'll try to split it by the path separator.
         components = args[0].to_s.split(split_pattern)
+        puts "C1: #{components}"
         loop do
           if components.empty? or not components[0].empty?
             break
           end
           components.shift
         end
+        puts "C2: #{components}"
 
         # If there are no components, return self/the root
         if components.empty?
           return self
         end
+        puts "C3: #{components}"
 
         # This PathedHash is already the leaf-most Hash
         if components.length == 1
@@ -82,6 +86,7 @@ module Unobtainium
           end
           return @data.send(method, *copy, &block)
         end
+        puts "C4: #{components}"
 
         # Deal with other paths. The frustrating part here is that for nested
         # hashes, only this outermost one is guaranteed to know anything about
