@@ -108,13 +108,17 @@ module Unobtainium
             return options
           end
 
-          # We have data, so we can remove the browser key itself
-          options.delete('browser')
-
           # We do have to check that we're not overwriting any of the keys.
-          data.keys.each do |key|
+          data.each do |key, value|
             key_s = key.to_s
-            if not options['caps'].key?(key) and not options['caps'].key?(key_s)
+            option_value = nil
+            if options['caps'].key?(key)
+              option_value = options['caps'][key]
+            elsif options['caps'].key?(key_s)
+              option_value = options['caps'][key_s]
+            end
+
+            if option_value.nil? or option_value == value
               next
             end
             raise ArgumentError, "You specified the browser option as, "\
