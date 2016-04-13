@@ -6,6 +6,9 @@
 # Copyright (c) 2016 Jens Finkhaeuser and other unobtainium contributors.
 # All rights reserved.
 #
+
+require_relative './support/util'
+
 module Unobtainium
   module Drivers
 
@@ -31,6 +34,8 @@ module Unobtainium
       }.freeze
 
       class << self
+        include ::Unobtainium::Drivers::Utility
+
         ##
         # Return true if the given label matches this driver implementation,
         # false otherwise.
@@ -83,17 +88,6 @@ module Unobtainium
         end
 
         private
-
-        ##
-        # For a recognized label alias, returns a normalized label.
-        def normalize_label(label)
-          LABELS.each do |normalized, aliases|
-            if label == normalized or aliases.include?(label)
-              return normalized
-            end
-          end
-          return nil
-        end
 
         ##
         # If the driver options include a request for a browser, we can

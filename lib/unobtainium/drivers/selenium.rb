@@ -6,6 +6,9 @@
 # Copyright (c) 2016 Jens Finkhaeuser and other unobtainium contributors.
 # All rights reserved.
 #
+
+require_relative './support/util'
+
 module Unobtainium
   module Drivers
 
@@ -23,6 +26,8 @@ module Unobtainium
       }.freeze
 
       class << self
+        include ::Unobtainium::Drivers::Utility
+
         ##
         # Return true if the given label matches this driver implementation,
         # false otherwise.
@@ -61,19 +66,6 @@ module Unobtainium
         def create(label, options)
           driver = ::Selenium::WebDriver.for(normalize_label(label), options)
           return driver
-        end
-
-        private
-
-        ##
-        # For a recognized label alias, returns a normalized label.
-        def normalize_label(label)
-          LABELS.each do |normalized, aliases|
-            if label == normalized or aliases.include?(label)
-              return normalized
-            end
-          end
-          return nil
         end
       end # class << self
     end # class Selenium
