@@ -15,3 +15,10 @@ end
 
 # Default is the test task
 task default: :test
+
+# Documentation
+require 'yard'
+YARD::Rake::YardocTask.new do |t|
+  t.files = ['lib/**/*.rb']
+  t.stats_options = ['--list-undoc']
+end
