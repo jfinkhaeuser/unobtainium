@@ -20,5 +20,6 @@ task default: :test
 require 'yard'
 YARD::Rake::YardocTask.new do |t|
   t.files = ['lib/**/*.rb']
+  t.options = ['-m', 'markdown']
   t.stats_options = ['--list-undoc']
 end
