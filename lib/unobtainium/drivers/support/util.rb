@@ -17,15 +17,20 @@ module Unobtainium
       # where keys are the normalized label, and the value is an array of
       # aliases:
       #
+      # ```ruby
       #   LABELS = {
       #     foo: [:alias1, :alias2],
       #     bar: [],
       #   }.freeze
+      # ```
       #
       # Empty aliases means that there are no aliases for this label.
+      #
+      # @param label [String, Symbol] the driver label to normalize
       def normalize_label(label)
+        sym_label = label.to_sym
         self::LABELS.each do |normalized, aliases|
-          if label == normalized or aliases.include?(label)
+          if sym_label == normalized or aliases.include?(sym_label)
             return normalized
           end
         end
