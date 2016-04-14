@@ -44,20 +44,24 @@ module Unobtainium
     class YAMLParser
       require 'yaml'
 
+      # @return parsed string
       def self.parse(string)
         YAML.load(string)
       end
     end
+    private_constant :YAMLParser
 
     # @api private
     # Very simple JSON parser
     class JSONParser
       require 'json'
 
+      # @return parsed string
       def self.parse(string)
         JSON.parse(string)
       end
     end
+    private_constant :JSONParser
 
     PathedHash::READ_METHODS.each do |method|
       # Wrap all read functions into something that checks for environment
@@ -100,11 +104,13 @@ module Unobtainium
         '.yaml' => YAMLParser,
         '.json' => JSONParser,
       }.freeze
+      private_constant :FILE_TO_PARSER
 
       # @api private
       # If the config file contains an Array, this is what they key of the
       # returned Hash will be.
       ARRAY_KEY = 'config'.freeze
+      private_constant :ARRAY_KEY
 
       ##
       # Loads a configuration file with the given file name. The format is

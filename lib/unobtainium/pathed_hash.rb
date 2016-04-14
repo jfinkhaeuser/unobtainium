@@ -44,11 +44,13 @@ module Unobtainium
     attr_accessor :separator
 
     # @api private
+    # Methods redefined to support pathed read access.
     READ_METHODS = [
       :[], :default, :delete, :fetch, :has_key?, :include?, :key?, :member?,
     ].freeze
 
     # @api private
+    # Methods redefined to support pathed write access.
     WRITE_METHODS = [
       :[]=, :store,
     ].freeze
@@ -132,7 +134,7 @@ module Unobtainium
     end
 
     ##
-    # Map any missing method to the driver implementation
+    # Map any missing method to the Hash implementation
     def respond_to?(meth)
       if not @data.nil? and @data.respond_to?(meth)
         return true
@@ -140,6 +142,8 @@ module Unobtainium
       return super
     end
 
+    ##
+    # Map any missing method to the Hash implementation
     def method_missing(meth, *args, &block)
       if not @data.nil? and @data.respond_to?(meth)
         return @data.send(meth.to_s, *args, &block)

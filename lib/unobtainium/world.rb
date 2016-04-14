@@ -20,11 +20,12 @@ module Unobtainium
     ##
     # Modules can have class methods, too.
     module ClassMethods
-      # Configuration related
+      # Set the config file path.
       def config_file=(name)
         @config_file = name
       end
 
+      # @return [String] the config file path, defaulting to 'config/config.yml'
       def config_file
         return @config_file || "config/config.yml"
       end
@@ -32,7 +33,7 @@ module Unobtainium
     extend ClassMethods
 
     ##
-    # Return the global configuration, loaded from :config_file
+    # Return the global configuration, loaded from `World#config_file`
     def config
       return ::Unobtainium::Runtime.instance.store_with_if(:config) do
         ::Unobtainium::Config.load_config(::Unobtainium::World.config_file)
@@ -40,6 +41,8 @@ module Unobtainium
     end
 
     ##
+    # (see Driver#create)
+    #
     # Returns a driver instance with the given options. If no options are
     # provided, options from the global configuration are used.
     def driver(label = nil, options = nil)

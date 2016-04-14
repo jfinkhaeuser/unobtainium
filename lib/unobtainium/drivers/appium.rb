@@ -11,6 +11,7 @@ require_relative './support/util'
 
 module Unobtainium
   # @api private
+  # Contains driver implementations
   module Drivers
 
     ##

@@ -179,6 +179,8 @@ module Unobtainium
       return super
     end
 
+    ##
+    # Map any missing method to the driver implementation
     def method_missing(meth, *args, &block)
       if not @impl.nil? and @impl.respond_to?(meth)
         return @impl.send(meth.to_s, *args, &block)

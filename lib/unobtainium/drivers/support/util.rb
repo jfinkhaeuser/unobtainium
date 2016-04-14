@@ -7,6 +7,8 @@
 # All rights reserved.
 #
 module Unobtainium
+  # @api private
+  # Contains driver implementations
   module Drivers
     ##
     # Utility code shared by driver implementations
