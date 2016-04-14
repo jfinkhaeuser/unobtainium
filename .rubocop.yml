@@ -58,3 +58,6 @@ Style/TrailingCommaInLiteral:
 
 Style/FirstParameterIndentation:
   Enabled: false
+
+Style/TrailingUnderscoreVariable:
+  Enabled: false
