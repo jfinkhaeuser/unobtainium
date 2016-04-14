@@ -61,3 +61,6 @@ Style/FirstParameterIndentation:
 
 Style/TrailingUnderscoreVariable:
   Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
