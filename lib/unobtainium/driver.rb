@@ -21,19 +21,29 @@ module Unobtainium
     # Class methods
     class << self
       ##
-      # Create a driver instance with the given arguments
-      def create(*args)
-        new(*args)
+      # Create a driver instance with the given arguments.
+      #
+      # @param label [String, Symbol] Label for the driver to create. Driver
+      #   implementations may accept normalized and alias labels, e.g.
+      #   `:firefox, `:ff`, `:remote`, etc.
+      # @param opts [Hash] Options passed to the driver implementation.
+      def create(label, opts = nil)
+        new(label, opts)
       end
 
       ##
       # Add a new driver implementation. The first parameter is the class
       # itself, the second should be a file path pointing to the file where
-      # the class is defined. You would typically pass __FILE__ for the second
+      # the class is defined. You would typically pass `__FILE__` for the second
       # parameter.
       #
       # Using file names lets us figure out whether the class is a duplicate,
       # or merely a second registration of the same class.
+      #
+      # Driver classes must implement the class methods listed in `DRIVER_METHODS`.
+      #
+      # @param klass (Class) Driver implementation class to register.
+      # @param path (String) Implementation path of the driver class.
       def register_implementation(klass, path)
         # We need to deal with absolute paths only
         fpath = File.absolute_path(path)
@@ -63,41 +73,43 @@ module Unobtainium
       private :new
 
       ##
-      # Ensures arguments are according to expectations.
-      def sanitize_options(*args)
-        if args.empty?
+      # @api private
+      # Resolves everything to do with driver options:
+      #
+      # - Normalizes the label
+      # - Loads the driver class
+      # - Normalizes and extends options from the driver implementation
+      def resolve_options(label, opts = nil)
+        if label.nil? or label.empty?
           raise ArgumentError, "Need at least one argument specifying the driver!"
         end
 
-        label = args[0].to_sym
+        label = label.to_sym
 
-        options = nil
-        if args.length > 1
-          if not args[1].nil? and not args[1].is_a? Hash
-            raise ArgumentError, "The second argument is expected to be an "\
-              "options hash!"
-          end
-          options = args[1]
+        if not opts.nil? and not opts.is_a? Hash
+          raise ArgumentError, "The second argument is expected to be an "\
+            "options Hash!"
         end
 
-        # Determine the driver class, if any
+        # Get the driver class.
         load_drivers
-
         driver_klass = get_driver(label)
         if not driver_klass
-          raise LoadError, "No driver implementation matching #{@label} found, "\
+          raise LoadError, "No driver implementation matching #{label} found, "\
             "aborting!"
         end
 
         # Sanitize options according to the driver's idea
-        if driver_klass.respond_to?(:sanitize_options)
-          label, options = driver_klass.sanitize_options(label, options)
+        options = opts
+        if driver_klass.respond_to?(:resolve_options)
+          label, options = driver_klass.resolve_options(label, opts)
         end
 
-        return label, options
+        return label, options, driver_klass
       end
 
       ##
+      # @api private
       # Load drivers; this loads all driver implementations included in this gem.
       # You can register external implementations with the :register_implementation
       # method.
@@ -124,7 +136,9 @@ module Unobtainium
       end
 
       ##
-      # Out of the loaded drivers, returns the one matching the label (if any)
+      # @api private
+      # Out of the loaded drivers, returns the one matching the label (if any).
+      # @param label [Symbol] The label matching a driver.
       def get_driver(label)
         # Of all the loaded classes, choose the first (unsorted) to match the
         # requested driver label
@@ -142,7 +156,16 @@ module Unobtainium
 
     ############################################################################
     # Public methods
-    attr_reader :label, :options, :impl
+
+    # @return [Symbol] the normalized label for the driver implementation
+    attr_reader :label
+
+    # @return [Hash] the options hash the driver implementation is using.
+    attr_reader :options
+
+    # @return [Object] the driver implementation itself; do not use this unless
+    #   you have to.
+    attr_reader :impl
 
     ##
     # Map any missing method to the driver implementation
@@ -164,20 +187,11 @@ module Unobtainium
 
     ##
     # Initializer
-    def initialize(*args)
-      # Load drivers
-      ::Unobtainium::Driver.load_drivers
-
+    def initialize(label, opts = nil)
       # Sanitize options
-      @label, @options = ::Unobtainium::Driver.sanitize_options(*args)
-
-      # Get the driver class. We kind of know this works because
-      # sanitize_options does the same, but let's be strict.
-      driver_klass = ::Unobtainium::Driver.get_driver(label)
-      if not driver_klass
-        raise LoadError, "No driver implementation matching #{@label} found, "\
-          "aborting!"
-      end
+      @label, @options, driver_klass = ::Unobtainium::Driver.resolve_options(
+          label,
+          opts)
 
       # Perform precondition checks of the driver class
       driver_klass.ensure_preconditions(@label, @options)

@@ -67,7 +67,7 @@ module Unobtainium
 
       # The driver may modify the options; if so, we should let it do that
       # here. That way our key (below) is based on the expanded options.
-      label, options = ::Unobtainium::Driver.sanitize_options(label, options)
+      label, options, _ = ::Unobtainium::Driver.resolve_options(label, options)
 
       # Create a key for the label and options. This should always
       # return the same key for the same label and options.
