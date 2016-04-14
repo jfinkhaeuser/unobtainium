@@ -55,7 +55,7 @@ module Unobtainium
 
         ##
         # Sanitize options, and expand the :browser key, if present.
-        def sanitize_options(label, options)
+        def resolve_options(label, options)
           # The label specifies the platform, if no other platform is given.
           normalized = normalize_label(label)
 
@@ -79,9 +79,7 @@ module Unobtainium
 
         ##
         # Create and return a driver instance
-        def create(label, options)
-          _, options = sanitize_options(label, options)
-
+        def create(_, options)
           # Create the driver
           driver = ::Appium::Driver.new(options).start_driver
           return driver

@@ -48,7 +48,7 @@ module Unobtainium
 
         ##
         # Selenium really wants symbol keys for the options
-        def sanitize_options(label, options)
+        def resolve_options(label, options)
           new_opts = {}
 
           if not options.nil?
