@@ -13,14 +13,25 @@ module Unobtainium
 
   ##
   # The PathedHash class wraps Hash by offering pathed access on top of
-  # regular access, i.e. instead of h["first"]["second"] you can write
-  # h["first.second"]
+  # regular access, i.e. instead of `h["first"]["second"]` you can write
+  # `h["first.second"]`.
+  #
+  # The main benefit is much simpler code for accessing nested structured.
+  # For any given path, PathedHash will return nil from `[]` if *any* of
+  # the path components do not exist.
+  #
+  # Similarly, intermediate nodes will be created when you write a value
+  # for a path.
+  #
+  # PathedHash also includes RecursiveMerge.
   class PathedHash
     include RecursiveMerge
 
     ##
-    # Initializer
-    def initialize(init = {})
+    # Initializer. Accepts `nil`, hashes or pathed hashes.
+    #
+    # @param init [NilClass, Hash] initial values.
+    def initialize(init = nil)
       if init.nil?
         @data = {}
       else
@@ -29,18 +40,21 @@ module Unobtainium
       @separator = '.'
     end
 
-    # The separator is the character or pattern splitting paths
+    # @return [String] the separator is the character or pattern splitting paths.
     attr_accessor :separator
 
+    # @api private
     READ_METHODS = [
       :[], :default, :delete, :fetch, :has_key?, :include?, :key?, :member?,
     ].freeze
+
+    # @api private
     WRITE_METHODS = [
       :[]=, :store,
     ].freeze
 
     ##
-    # Returns the pattern to split paths at
+    # @return [RegExp] the pattern to split paths at; based on `separator`
     def split_pattern
       /(?<!\\)#{Regexp.escape(@separator)}/
     end
@@ -99,14 +113,18 @@ module Unobtainium
       end
     end
 
+    # @return [String] string representation
     def to_s
       @data.to_s
     end
 
+    # @return [PathedHash] duplicate, as `.dup` usually works
     def dup
       PathedHash.new(@data.dup)
     end
 
+    # In place merge, as it usually works for hashes.
+    # @return [PathedHash] self
     def merge!(*args, &block)
       # FIXME: we may need other methods like this. This is used by
       #        RecursiveMerge, so we know it's required.
