@@ -14,29 +14,32 @@ require 'unobtainium/pathed_hash'
 module Unobtainium
   ##
   # The Config class extends PathedHash by two main pieces of functionality:
+  #
   # - it loads configuration files and turns them into pathed hashes, and
   # - it treats environment variables as overriding anything contained in
   #   the configuration file.
   #
   # For configuration file loading, a named configuration file will be laoaded
-  # if present. A file with the same name but '-local' appended before the
+  # if present. A file with the same name but `-local` appended before the
   # extension will be loaded as well, overriding any values in the original
   # configuration file.
   #
   # For environment variable support, any environment variable named like a
   # path into the configuration hash, but with separators transformed to
   # underscore and all letters capitalized will override values from the
-  # configuration files under that path, i.e. FOO_BAR will override 'foo.bar'.
+  # configuration files under that path, i.e. `FOO_BAR` will override `'foo.bar'`.
   #
   # Environment variables can contain JSON *only*; if the value can be parsed
   # as JSON, it becomes a Hash in the configuration tree. If it cannot be parsed
   # as JSON, it remains a string.
   #
-  # Note: if your configuration file's top-level structure is an array, it will
-  # be returned as a hash with a 'config' key that maps to your file's contents.
+  # **Note:** if your configuration file's top-level structure is an array, it
+  # will be returned as a hash with a 'config' key that maps to your file's
+  # contents.
   # That means that if you are trying to merge a hash with an array config, the
   # result may be unexpected.
   class Config < PathedHash
+    # @api private
     # Very simple YAML parser
     class YAMLParser
       require 'yaml'
@@ -46,6 +49,7 @@ module Unobtainium
       end
     end
 
+    # @api private
     # Very simple JSON parser
     class JSONParser
       require 'json'
@@ -89,6 +93,7 @@ module Unobtainium
     end
 
     class << self
+      # @api private
       # Mapping of file name extensions to parser types.
       FILE_TO_PARSER = {
         '.yml'  => YAMLParser,
@@ -96,6 +101,7 @@ module Unobtainium
         '.json' => JSONParser,
       }.freeze
 
+      # @api private
       # If the config file contains an Array, this is what they key of the
       # returned Hash will be.
       ARRAY_KEY = 'config'.freeze
@@ -103,6 +109,10 @@ module Unobtainium
       ##
       # Loads a configuration file with the given file name. The format is
       # detected based on one of the extensions in FILE_TO_PARSER.
+      #
+      # @param path [String] the path of the configuration file to load.
+      # @param resolve_extensions [Boolean] flag whether to resolve configuration
+      #   hash extensions. (see `#resolve_extensions`)
       def load_config(path, resolve_extensions = true)
         # Load base and local configuration files
         base, config = load_base_config(path)
@@ -177,22 +187,25 @@ module Unobtainium
     ##
     # Resolve extensions in configuration hashes. If your hash contains e.g.:
     #
+    # ```yaml
     #   foo:
     #     bar:
     #       some: value
     #     baz:
     #       extends: bar
+    # ```
     #
-    # Then 'foo.baz.some' will equal 'value' after resolving extensions. Note
-    # that :load_config calls this function, so normally you don't need to call
-    # it yourself. You can switch this behaviour off in :load_config.
+    # Then `'foo.baz.some'` will equal `'value'` after resolving extensions. Note
+    # that `:load_config` calls this function, so normally you don't need to call
+    # it yourself. You can switch this behaviour off in `:load_config`.
     #
     # Note that this process has some intended side-effects:
-    # 1) If a hash can't be extended because the base cannot be found, an error
+    #
+    # 1. If a hash can't be extended because the base cannot be found, an error
     #    is raised.
-    # 2) If a hash got successfully extended, the :extends keyword itself is
+    # 1. If a hash got successfully extended, the `extends` keyword itself is
     #    removed from the hash.
-    # 3) In a successfully extended hash, an :base keyword, which contains
+    # 1. In a successfully extended hash, an `base` keyword, which contains
     #    the name of the base. In case of multiple recursive extensions, the
     #    final base is stored here.
     #
@@ -203,6 +216,8 @@ module Unobtainium
       recursive_merge("", "")
     end
 
+    ##
+    # Same as `dup.resolve_extensions!`
     def resolve_extensions
       dup.resolve_extensions!
     end
