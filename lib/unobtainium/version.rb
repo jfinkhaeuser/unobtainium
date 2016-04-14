@@ -7,5 +7,6 @@
 # All rights reserved.
 #
 module Unobtainium
+  # The current release version
   VERSION = "0.2.1".freeze
 end
