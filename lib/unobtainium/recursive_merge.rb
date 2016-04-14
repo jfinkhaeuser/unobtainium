@@ -11,6 +11,18 @@ module Unobtainium
   ##
   # Provides recursive merge functions for hashes. Used in PathedHash.
   module RecursiveMerge
+    ##
+    # Recursively merge `:other` into this Hash.
+    #
+    # This starts by merging the leaf-most Hash entries. Arrays are merged
+    # by addition.
+    #
+    # For everything that's neither Hash or Array, if the `:overwrite`
+    # parameter is true, the entry from `:other` is used. Otherwise the entry
+    # from `:self` is used.
+    #
+    # @param other [Hash] the hash to merge into `:self`
+    # @param overwrite [Boolean] see method description.
     def recursive_merge!(other, overwrite = true)
       if other.nil?
         return self
@@ -33,6 +45,9 @@ module Unobtainium
       merge!(other, &merger)
     end
 
+    ##
+    # Same as `dup.recursive_merge!`
+    # @param (see #recursive_merge!)
     def recursive_merge(other, overwrite = true)
       dup.recursive_merge!(other, overwrite)
     end
