@@ -26,10 +26,11 @@ Unobtainium's functionality is in standalone classes, but it's all combined in
 the `Unobtainium::World` module.
 
 - The `PathedHash` class extends `Hash` by allowing paths to nested values, e.g.:
-  ```ruby
-  h = PathedHash.new { "foo" => { "bar" => 42 }}
-  h["foo.bar"] == 42 # true
-  ```
+
+    ```ruby
+    h = PathedHash.new { "foo" => { "bar" => 42 }}
+    h["foo.bar"] == 42 # true
+    ```
 
 - The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
   initialize itself with values. See the documentation on [configuration features](docs/CONFIGURATION.md)
@@ -39,12 +40,13 @@ the `Unobtainium::World` module.
   destructors if required. That allows for clean teardown and avoids everything
   having to implement the Singleton pattern itself.
 - The `Driver` class, of course, wraps either of Appium or Selenium drivers:
-  ```ruby
-  drv = Driver.create(:firefox) # uses Selenium
-  drv = Driver.create(:android) # uses Appium
 
-  drv.navigate.to "..." # delegates to Selenium or Appium
-  ```
+    ```ruby
+    drv = Driver.create(:firefox) # uses Selenium
+    drv = Driver.create(:android) # uses Appium
+
+    drv.navigate.to "..." # delegates to Selenium or Appium
+    ```
 
 ## World
 
