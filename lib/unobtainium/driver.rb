@@ -79,6 +79,9 @@ module Unobtainium
       # - Normalizes the label
       # - Loads the driver class
       # - Normalizes and extends options from the driver implementation
+      #
+      # @param label [Symbol, String] the driver label
+      # @param opts [Hash] driver options
       def resolve_options(label, opts = nil)
         if label.nil? or label.empty?
           raise ArgumentError, "Need at least one argument specifying the driver!"
