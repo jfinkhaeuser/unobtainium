@@ -34,13 +34,14 @@ module Unobtainium
     end
 
     ##
-    # Number of objects stored in the object map
+    # @return [Integer] number of objects stored in the object map
     def length
       return @objects.length
     end
 
     ##
-    # Does an object with the given name exist?
+    # @param name [String, Symbol] name or label for an object
+    # @return [Boolean] does an object with the given name exist?
     def has?(name)
       return @objects.key?(name)
     end
@@ -51,8 +52,14 @@ module Unobtainium
     # is stored.
     #
     # If a destructor is passed, it is used to destroy the *new* object only.
-    # If no destructor is passed and the object responds to a :destroy method, that
-    # method is called.
+    # If no destructor is passed and the object responds to a `#destroy` method,
+    # that method is called.
+    #
+    # @param name [String, Symbol] name or label for the object to store
+    # @param object [Object] the object to store
+    # @param destructor [Func] a custom destructor accepting the object as its
+    #   parameter.
+    # @return [Object] the stored object
     def store(name, object, destructor = nil)
       delete(name)
 
@@ -65,7 +72,13 @@ module Unobtainium
     # Store the object returned by the block, if any. If no object is returned
     # or no block is given, this function does nothing.
     #
-    # Otherwise it works much like :store above.
+    # Otherwise it works much like `#store`.
+    #
+    # @param name [String, Symbol] name or label for the object to store
+    # @param destructor [Func] a custom destructor accepting the object as its
+    #   parameter.
+    # @param block [Func] a block returning the created object.
+    # @return [Object] the stored object
     def store_with(name, destructor = nil, &block)
       object = nil
       if not block.nil?
@@ -80,7 +93,8 @@ module Unobtainium
     end
 
     ##
-    # Like :store, but only stores the object if none exists for that key yet.
+    # (see #store)
+    # Like `#store`, but only stores the object if none exists for that key yet.
     def store_if(name, object, destructor = nil)
       if has?(name)
         return self[name]
@@ -89,7 +103,8 @@ module Unobtainium
     end
 
     ##
-    # Like :store_if, but as a block version similar to :store_with.
+    # (see #store_with)
+    # Like `#store_if`, but as a block version similar to `#store_with`.
     def store_with_if(name, destructor = nil, &block)
       if has?(name)
         return self[name]
@@ -99,6 +114,8 @@ module Unobtainium
 
     ##
     # Deletes (and destroys) any object found under the given name.
+    #
+    # @param name [String, Symbol] name or label for the object to store
     def delete(name)
       if not @objects.key?(name)
         return
@@ -112,6 +129,11 @@ module Unobtainium
     ##
     # Returns the object with the given name, or the default value if no such
     # object exists.
+    #
+    # @param name [String, Symbol] name or label for the object to retrieve
+    # @param default [Object] default value to return if no object is found for
+    #   name or label.
+    # @return [Object] the object matching the name/label, or the default value.
     def fetch(name, default = nil)
       return @objects.fetch(name)[0]
     rescue KeyError
@@ -122,8 +144,11 @@ module Unobtainium
     end
 
     ##
-    # Similar to :fetch, but always returns nil for an object that could not
+    # Similar to `#fetch`, but always returns nil for an object that could not
     # be found.
+    #
+    # @param name [String, Symbol] name or label for the object to retrieve
+    # @return [Object] the object matching the name/label, or the default value.
     def [](name)
       val = @objects[name]
       if val.nil?
