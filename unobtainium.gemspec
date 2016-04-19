@@ -48,6 +48,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.4"
   spec.add_development_dependency "simplecov", "~> 0.11"
   spec.add_development_dependency "yard", "~> 0.8"
+
+  spec.add_dependency "sys-proctable", "~> 1.0"
 end
 # rubocop:enable Style/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing

@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     unobtainium (0.2.1)
+      sys-proctable (~> 1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -42,6 +43,7 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    sys-proctable (1.0.0)
     unicode-display_width (1.0.3)
     yard (0.8.7.6)
 
