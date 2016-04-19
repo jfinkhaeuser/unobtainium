@@ -48,6 +48,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.4"
   spec.add_development_dependency "simplecov", "~> 0.11"
   spec.add_development_dependency "yard", "~> 0.8"
+  spec.add_development_dependency "appium_lib"
+  spec.add_development_dependency "selenium-webdriver"
+  spec.add_development_dependency "phantomjs"
+  spec.add_development_dependency "cucumber"
 
   spec.add_dependency "sys-proctable", "~> 1.0"
 end

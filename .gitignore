@@ -37,3 +37,7 @@ build/
 
 # Editor files
 .*.sw*
+
+# Cucumber
+C:\\nppdf32Log\\debuglog.txt
+config/*-local.yml
