@@ -9,6 +9,8 @@ so that test code can more easily cover:
   - Mobile browsers
   - Mobile apps
 
+The gem also wraps [PhantomJS](http://phantomjs.org/) for headless testing.
+
 Some additional useful functionality for the maintenance of test suites is
 also added.
 
