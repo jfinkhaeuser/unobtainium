@@ -8,8 +8,8 @@
 #
 module Unobtainium
   # @api private
-  # Contains driver implementations
-  module Drivers
+  # Contains support code
+  module Support
     ##
     # Utility code shared by driver implementations
     module Utility
@@ -39,5 +39,5 @@ module Unobtainium
         return nil
       end
     end # module Utility
-  end # module Drivers
+  end # module Support
 end # module Unobtainium

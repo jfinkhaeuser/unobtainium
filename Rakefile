@@ -1,20 +1,18 @@
 # Rubocop
 require 'rubocop/rake_task'
-RuboCop::RakeTask.new
+RuboCop::RakeTask.new(:rubocop)
 
 # Rspec
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:rspec)
 
-# Combined test task
-desc "Test the code"
-task :test do
-  Rake::Task[:rubocop].invoke
-  Rake::Task[:spec].invoke
+# Cucumber
+require 'cucumber'
+require 'cucumber/rake/task'
+Cucumber::Rake::Task.new(:cuke) do |t|
+  t.cucumber_opts = "--fail-fast --format=pretty --expand "\
+                    "--order=random --backtrace"
 end
-
-# Default is the test task
-task default: :test
 
 # Documentation
 require 'yard'
@@ -23,3 +21,13 @@ YARD::Rake::YardocTask.new do |t|
   t.options = ['-m', 'markdown']
   t.stats_options = ['--list-undoc']
 end
+
+# Combined test task
+desc "Test all the things!"
+task :test do
+  Rake::Task[:rubocop].invoke
+  Rake::Task[:rspec].invoke
+end
+
+# Default is the test task
+task default: :test

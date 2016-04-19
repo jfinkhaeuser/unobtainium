@@ -7,7 +7,7 @@
 # All rights reserved.
 #
 
-require_relative './support/util'
+require_relative '../support/util'
 
 module Unobtainium
   # @api private
@@ -22,13 +22,12 @@ module Unobtainium
         firefox: [:ff,],
         internet_explorer: [:internetexplorer, :explorer, :ie,],
         safari: [],
-        chrome: [],
-        chromium: [],
+        chrome: [:chromium],
         remote: [],
       }.freeze
 
       class << self
-        include ::Unobtainium::Drivers::Utility
+        include ::Unobtainium::Support::Utility
 
         ##
         # Return true if the given label matches this driver implementation,
