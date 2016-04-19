@@ -24,6 +24,24 @@ describe ::Unobtainium::Support::PortScanner do
           Errno::ECONNREFUSED)
       expect(tester.port_open?('localhost', 1234)).to be_falsy
     end
+
+    it "handles a single domain parameter" do
+      allow_any_instance_of(Socket).to receive(:connect).and_raise(
+          Errno::ECONNREFUSED)
+      expect(tester.port_open?('localhost', 1234, :INET)).to be_falsy
+    end
+
+    it "handles many domain parameters" do
+      allow_any_instance_of(Socket).to receive(:connect).and_raise(
+          Errno::ECONNREFUSED)
+      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+    end
+
+    it "rejects bad domain parameters" do
+      expect do
+        tester.port_open?('localhost', 1234, :FOO)
+      end.to raise_error(ArgumentError)
+    end
   end
 
   describe "scan" do
@@ -96,6 +114,18 @@ describe ::Unobtainium::Support::PortScanner do
       end
 
       expect(tester.scan('localhost', 1233..1234, for: :closed)).to eql [1233]
+    end
+
+    it "rejects bad amounts" do
+      expect do
+        tester.scan('localhost', 1230..4330, amount: :foo)
+      end.to raise_error(ArgumentError)
+    end
+
+    it "rejects bad for" do
+      expect do
+        tester.scan('localhost', 1230..4330, for: :foo)
+      end.to raise_error(ArgumentError)
     end
   end
 end

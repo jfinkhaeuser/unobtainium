@@ -6,10 +6,26 @@
 # Copyright (c) 2016 Jens Finkhaeuser and other unobtainium contributors.
 # All rights reserved.
 #
+
+require 'socket'
+
 module Unobtainium
   # @api private
   # Contains support code
   module Support
+    ##
+    # A bit of metaprogramming hackery to make a constant with possible domains
+    # from Socket::Constants.
+    if not constants.include?('DOMAINS')
+      domains = []
+      Socket::Constants.constants.each do |name|
+        if name.to_s.start_with?("AF_")
+          domains << name.to_s.gsub(/^AF_/, '').to_sym
+        end
+      end
+      const_set('DOMAINS', domains.freeze)
+    end
+
     ##
     # A port scanner for finding a free port for running e.g. a selenium
     # or appium server.
@@ -18,20 +34,44 @@ module Unobtainium
       # Returns true if the port is open on the host, false otherwise.
       # @param host [String] host name or IP address
       # @param port [Integer] port number (1..65535)
-      def port_open?(host, port)
+      # @param domains [Array/Symbol] :INET, :INET6, etc. or an Array of
+      #     these. Any from Socket::Constants::AF_* work. Defaults to
+      #     [:INET, :INET6].
+      def port_open?(host, port, domains = [:INET, :INET6])
         if port < 1 or port > 65535
           raise ArgumentError, "Port must be in range 1..65535!"
         end
 
-        require 'socket'
-        sock = Socket.new(:INET, :STREAM)
+        test_domains = nil
+        if domains.is_a? Array
+          test_domains = domains.dup
+        else
+          test_domains = [domains]
+        end
+
+        test_domains.each do |domain|
+          if not DOMAINS.include?(domain)
+            raise ArgumentError, "Domains must be one of #{DOMAINS}, or an Array "\
+              "of them, but #{domain} isn't!"
+          end
+        end
+
+        # Test a socket for each domain
         addr = Socket.sockaddr_in(port, host)
-        return 0 == sock.connect(addr)
-      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-        return false
-      ensure
-        if not sock.nil?
-          sock.close
+
+        test_domains.each do |domain|
+          begin
+            sock = Socket.new(domain, :STREAM)
+            return 0 == sock.connect(addr)
+          rescue Errno::EAFNOSUPPORT
+            next # try next domain
+          rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
+            return false
+          ensure
+            if not sock.nil?
+              sock.close
+            end
+          end
         end
       end
 
@@ -41,10 +81,6 @@ module Unobtainium
       # given.
       def scan(host, *args)
         # Argument checks
-        if host.nil? or host.empty?
-          raise ArgumentError, "Must provide a host name or IP!"
-        end
-
         if args.empty?
           raise ArgumentError, "Need at least one port to scan!"
         end
