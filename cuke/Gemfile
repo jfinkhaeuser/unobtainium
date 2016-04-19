@@ -6,6 +6,7 @@ gem 'cucumber'
 # For drivers
 gem 'appium_lib'
 gem 'selenium-webdriver'
+gem 'phantomjs'
 
 # unobtainium itself; test code should point to the current repo and branch
 repo = `git config --get remote.origin.url`.strip
