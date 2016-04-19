@@ -7,7 +7,7 @@
 # All rights reserved.
 #
 
-require_relative './support/util'
+require_relative '../support/util'
 
 module Unobtainium
   # @api private
@@ -35,7 +35,7 @@ module Unobtainium
       }.freeze
 
       class << self
-        include ::Unobtainium::Drivers::Utility
+        include ::Unobtainium::Support::Utility
 
         ##
         # Return true if the given label matches this driver implementation,

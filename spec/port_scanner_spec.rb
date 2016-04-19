@@ -1,8 +1,8 @@
 require 'spec_helper'
-require_relative '../lib/unobtainium/drivers/support/port_scanner'
+require_relative '../lib/unobtainium/support/port_scanner'
 
-describe ::Unobtainium::Drivers::PortScanner do
-  let(:tester) { Class.new { extend ::Unobtainium::Drivers::PortScanner } }
+describe ::Unobtainium::Support::PortScanner do
+  let(:tester) { Class.new { extend ::Unobtainium::Support::PortScanner } }
 
   # This Socket#connect mock finds port 1234 or 4321 open
   def connect_mock(_, addr)

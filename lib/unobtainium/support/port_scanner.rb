@@ -8,8 +8,8 @@
 #
 module Unobtainium
   # @api private
-  # Contains driver implementations
-  module Drivers
+  # Contains support code
+  module Support
     ##
     # A port scanner for finding a free port for running e.g. a selenium
     # or appium server.
@@ -120,5 +120,5 @@ module Unobtainium
         return false
       end
     end # module PortScanner
-  end # module Drivers
+  end # module Support
 end # module Unobtainium
