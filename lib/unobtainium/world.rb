@@ -36,7 +36,11 @@ module Unobtainium
     # Return the global configuration, loaded from `World#config_file`
     def config
       return ::Unobtainium::Runtime.instance.store_with_if(:config) do
-        ::Unobtainium::Config.load_config(::Unobtainium::World.config_file)
+        begin
+          ::Unobtainium::Config.load_config(::Unobtainium::World.config_file)
+        rescue Errno::ENOENT
+          {}
+        end
       end
     end
 
