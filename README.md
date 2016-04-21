@@ -24,6 +24,8 @@ also added.
 You can use unobtainium on its own, or use it as part of a
 [cucumber](https://cucumber.io/) test suite.
 
+[![Unobtainium Demonstration](http://img.youtube.com/vi/82pYWG5uTnM/0.jpg)](http://www.youtube.com/watch?v=82pYWG5uTnM)
+
 Unobtainium's functionality is in standalone classes, but it's all combined in
 the `Unobtainium::World` module.
 
