@@ -170,7 +170,9 @@ drivers:
 The tests can be run on device/browser farms. Typically you only need to
 configure drivers, much like for mobile testing. The following example
 is for [TestingBot](https://testingbot.com). Note that each farm expects
-different configuration keys for selecting browsers and for authentication.
+different configuration keys for selecting browsers and for authentication,
+and that `unobtainium` just passes these values through to Selenium and/or
+Appium.
 
 ```yaml
 # config/config.yml
