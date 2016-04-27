@@ -27,6 +27,17 @@ module Unobtainium
   class PathedHash
     include RecursiveMerge
 
+    DEFAULT_PROC = proc do |hash, key|
+      case key
+      when String
+        sym = key.to_sym
+        hash[sym] if hash.key?(sym)
+      when Symbol
+        str = key.to_s
+        hash[str] if hash.key?(str)
+      end
+    end.freeze
+
     ##
     # Initializer. Accepts `nil`, hashes or pathed hashes.
     #
@@ -38,6 +49,8 @@ module Unobtainium
         @data = init.dup
       end
       @separator = '.'
+
+      @data.default_proc = DEFAULT_PROC
     end
 
     # @return [String] the separator is the character or pattern splitting paths.
@@ -106,6 +119,7 @@ module Unobtainium
         # For write methods, we need to create intermediary hashes.
         leaf = recursive_fetch(components, @data,
                                create: WRITE_METHODS.include?(method))
+        leaf.default_proc = DEFAULT_PROC
 
         # If we have a leaf, we want to send the requested method to that
         # leaf.

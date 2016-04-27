@@ -54,6 +54,31 @@ describe ::Unobtainium::PathedHash do
     expect(ph["bar.nope"]).to eql nil
   end
 
+  it "can be used with indifferent access from string key" do
+    sample = {
+      "foo" => 42,
+    }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph["foo"]).to eql 42
+    expect(ph[:foo]).to eql 42
+  end
+
+  it "can be used with indifferent access from symbol key" do
+    sample = {
+      foo: 42,
+      bar: {
+        baz: 'quux',
+      }
+    }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph["foo"]).to eql 42
+    expect(ph[:foo]).to eql 42
+
+    expect(ph['bar.baz']).to eql 'quux'
+  end
+
   it "treats a single separator as the root" do
     sample = { "foo" => 42 }
     ph = ::Unobtainium::PathedHash.new(sample)
