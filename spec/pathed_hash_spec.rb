@@ -34,6 +34,11 @@ describe ::Unobtainium::PathedHash do
       expect(inverted.empty?).to eql false
       expect(inverted[42]).to eql :foo
     end
+
+    it "delegates to Hash if it's nothing to do with paths" do
+      ph = ::Unobtainium::PathedHash.new(foo: 42)
+      expect(ph.default).to be_nil
+    end
   end
 
   it "can recursively read entries via a path" do
