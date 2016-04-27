@@ -89,9 +89,11 @@ module Unobtainium
 
         label = label.to_sym
 
-        if not opts.nil? and not opts.is_a? Hash
-          raise ArgumentError, "The second argument is expected to be an "\
-            "options Hash!"
+        if not opts.nil?
+          if not (opts.is_a? Hash or opts.is_a? ::Unobtainium::PathedHash)
+            raise ArgumentError, "The second argument is expected to be an "\
+              "options Hash!"
+          end
         end
 
         # Get the driver class.
