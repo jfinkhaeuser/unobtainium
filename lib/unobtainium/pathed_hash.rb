@@ -122,6 +122,9 @@ module Unobtainium
         if leaf.is_a? Hash
           leaf.default_proc = DEFAULT_PROC
         end
+        if leaf.nil?
+          leaf = @data
+        end
 
         # If we have a leaf, we want to send the requested method to that
         # leaf.

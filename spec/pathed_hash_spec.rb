@@ -59,6 +59,15 @@ describe ::Unobtainium::PathedHash do
     expect(ph["bar.nope"]).to eql nil
   end
 
+  it "behaves consistently if in a path the first node cannot be found" do
+    sample = {
+      "foo" => 42,
+    }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph["nope.bar"]).to eql nil
+  end
+
   it "can be used with indifferent access from string key" do
     sample = {
       "foo" => 42,
