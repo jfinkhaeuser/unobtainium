@@ -64,3 +64,6 @@ Style/TrailingUnderscoreVariable:
 
 Style/NumericLiterals:
   Enabled: false
+
+Style/FileName:
+  Enabled: false
