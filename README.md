@@ -38,7 +38,7 @@ the `Unobtainium::World` module.
 
 - The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
   initialize itself with values. See the documentation on [configuration features](docs/CONFIGURATION.md)
-  for details
+  for details.
 - The `Runtime` class is a singleton and a `Hash`-like container (but simpler),
   that destroys all of its contents at the end of a script, calling custom
   destructors if required. That allows for clean teardown and avoids everything
@@ -75,6 +75,13 @@ The configuration file knows two configuration variables:
 - `drivers` (note the trailing s) is a Hash. Under each key you can nest an
   options hash you might otherwise pass to `Driver.create` as the second
   parameter.
+
+See the documentation on [configuration features](docs/CONFIGURATION.md) for
+details.
+
+## Development
+
+- [driver development](docs/DRIVERS.md)
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
