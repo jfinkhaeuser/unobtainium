@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    unobtainium (0.3.3)
+    unobtainium (0.3.4)
       sys-proctable (~> 1.0)
 
 GEM
