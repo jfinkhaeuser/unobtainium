@@ -79,9 +79,17 @@ The configuration file knows two configuration variables:
 See the documentation on [configuration features](docs/CONFIGURATION.md) for
 details.
 
-## Development
+# Development
 
 - [driver development](docs/DRIVERS.md)
+
+# Additional Drivers
+
+- [unobtainium-nokogiri](https://github.com/jfinkhaeuser/unobtainium-nokogiri) is
+  a nokogiri-based driver for entirely browserless access to XML and HTML files
+  and pages.
+- [unobtainium-faraday](https://github.com/jfinkhaeuser/unobtainium-faraday) is
+  a faraday-based driver for dealing with RESTish APIs.
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
