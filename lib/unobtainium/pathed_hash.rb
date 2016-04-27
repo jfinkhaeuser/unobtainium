@@ -119,7 +119,9 @@ module Unobtainium
         # For write methods, we need to create intermediary hashes.
         leaf = recursive_fetch(components, @data,
                                create: WRITE_METHODS.include?(method))
-        leaf.default_proc = DEFAULT_PROC
+        if leaf.is_a? Hash
+          leaf.default_proc = DEFAULT_PROC
+        end
 
         # If we have a leaf, we want to send the requested method to that
         # leaf.
