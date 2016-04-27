@@ -188,7 +188,7 @@ module Unobtainium
 
       # If we're a write function, then we need to create intermediary objects,
       # i.e. what's at head if nothing is there.
-      if options[:create] and data.fetch(head, nil).nil?
+      if options[:create] and data[head].nil?
         data[head] = {}
       end
 

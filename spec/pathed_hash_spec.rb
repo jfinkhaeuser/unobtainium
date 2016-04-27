@@ -172,4 +172,21 @@ describe ::Unobtainium::PathedHash do
     expect(ph2["foo.bar"]).to eql 42
     expect(ph2["foo.baz"]).to eql "quux"
   end
+
+  it "can write with indifferent access without overwriting" do
+    sample = {
+      foo: {
+        bar: 42,
+        baz: 'quux',
+      }
+    }
+    ph = ::Unobtainium::PathedHash.new(sample)
+
+    expect(ph['foo.bar']).to eql 42
+    expect(ph['foo.baz']).to eql 'quux'
+
+    ph['foo.bar'] = 123
+    expect(ph['foo.bar']).to eql 123
+    expect(ph['foo.baz']).to eql 'quux'
+  end
 end
