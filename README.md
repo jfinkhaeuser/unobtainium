@@ -90,6 +90,8 @@ details.
   and pages.
 - [unobtainium-faraday](https://github.com/jfinkhaeuser/unobtainium-faraday) is
   a faraday-based driver for dealing with RESTish APIs.
+- [unobtainium-kramdown](https://github.com/jfinkhaeuser/unobtainium-kramdown) is
+  a faraday-based driver for dealing with Markdown structured text.
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
