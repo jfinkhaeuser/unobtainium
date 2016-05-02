@@ -174,8 +174,8 @@ module Unobtainium
 
     ##
     # Map any missing method to the driver implementation
-    def respond_to?(meth)
-      if not @impl.nil? and @impl.respond_to?(meth)
+    def respond_to_missing?(meth, include_private = false)
+      if not @impl.nil? and @impl.respond_to?(meth, include_private)
         return true
       end
       return super
