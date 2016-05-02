@@ -88,7 +88,7 @@ PLATFORMS
 
 DEPENDENCIES
   appium_lib
-  bundler (~> 1.11)
+  bundler (~> 1.12)
   codeclimate-test-reporter
   cucumber
   phantomjs
@@ -101,4 +101,4 @@ DEPENDENCIES
   yard (~> 0.8)
 
 BUNDLED WITH
-   1.11.2
+   1.12.1
