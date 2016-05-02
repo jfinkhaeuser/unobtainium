@@ -154,8 +154,8 @@ module Unobtainium
 
     ##
     # Map any missing method to the Hash implementation
-    def respond_to?(meth)
-      if not @data.nil? and @data.respond_to?(meth)
+    def respond_to_missing?(meth, include_private = false)
+      if not @data.nil? and @data.respond_to?(meth, include_private)
         return true
       end
       return super
