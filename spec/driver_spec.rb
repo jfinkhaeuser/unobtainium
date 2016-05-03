@@ -5,6 +5,33 @@ require_relative './mock_driver.rb'
 class FakeDriver
 end # class FakeDriver
 
+module TestModule
+  class << self
+    def matches?(_)
+      # Always match!
+      true
+    end
+  end # class << self
+
+  def my_module_func
+  end
+end # module TestModule
+
+module NonMatchingTestModule
+  class << self
+    def matches?(_)
+      # Never match!
+      false
+    end
+  end # class << self
+
+  def does_not_exist
+  end
+end # module NonMatchingTestModule
+
+module FakeModule
+end # module FakeModule
+
 describe ::Unobtainium::Driver do
   before :each do
     ::Unobtainium::Driver.register_implementation(MockDriver, "mock_driver.rb")
@@ -18,7 +45,8 @@ describe ::Unobtainium::Driver do
 
   it "refuses to register the same driver twice from different locations" do
     expect do
-      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__)
+      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '1')
+      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '2')
     end.to raise_error(LoadError)
   end
 
@@ -61,5 +89,47 @@ describe ::Unobtainium::Driver do
   it "passes options through correctly" do
     drv = ::Unobtainium::Driver.create(:mock, foo: 42)
     expect(drv.passed_options).to eql foo: 42
+  end
+
+  describe 'modules' do
+    it 'will register a module' do
+      expect do
+        ::Unobtainium::Driver.register_module(TestModule, __FILE__)
+      end.not_to raise_error(LoadError)
+    end
+
+    it 'refuses to register the same module twice' do
+      expect do
+        ::Unobtainium::Driver.register_module(TestModule, __FILE__ + '1')
+        ::Unobtainium::Driver.register_module(TestModule, __FILE__ + '2')
+      end.to raise_error(LoadError)
+    end
+
+    it 'refuses to register a module with the wrong interface' do
+      expect do
+        ::Unobtainium::Driver.register_module(FakeModule, __FILE__)
+      end.to raise_error(LoadError)
+    end
+
+    it 'extends a driver with a registered module' do
+      expect do
+        ::Unobtainium::Driver.register_module(TestModule, __FILE__)
+      end.not_to raise_error(LoadError)
+
+      drv = ::Unobtainium::Driver.create(:mock)
+
+      expect(drv.respond_to?(:my_module_func)).to be_truthy
+    end
+
+    it 'does not extend a driver with a non-matching module' do
+      expect do
+        ::Unobtainium::Driver.register_module(TestModule, __FILE__)
+        ::Unobtainium::Driver.register_module(NonMatchingTestModule, __FILE__)
+      end.not_to raise_error(LoadError)
+
+      drv = ::Unobtainium::Driver.create(:mock)
+
+      expect(drv.respond_to?(:does_not_exist)).to be_falsy
+    end
   end
 end

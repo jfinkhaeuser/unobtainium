@@ -70,6 +70,41 @@ module Unobtainium
         @@drivers[klass] = fpath
       end
 
+      ##
+      # Add a new driver module. The first parameter is the class itself, the
+      # second should be a file path pointing to the file where the class is
+      # defined. You would typically pass `__FILE__` for the second parameter.
+      #
+      # Driver modules must implement the class methods listed in `MODULE_METHODS`.
+      #
+      # @param klass (Class) Driver implementation class to register.
+      # @param path (String) Implementation path of the driver class.
+      def register_module(klass, path)
+        # We need to deal with absolute paths only
+        fpath = File.absolute_path(path)
+
+        # Figure out if the class implements all the methods we need; we're not
+        # checking for anything else.
+        klass_methods = klass.methods - klass.instance_methods - Object.methods
+
+        if MODULE_METHODS - klass_methods != []
+          raise LoadError, "Driver module #{klass.name} is not implementing all "\
+            "of the class methods #{MODULE_METHODS}, aborting!"
+        end
+
+        # The second question is whether the same class is already known, or
+        # whether a class with the same name but under a different location is
+        # known.
+        if @@modules.include?(klass) and @@modules[klass] != fpath
+          raise LoadError, "Driver module #{klass.name} is duplicated in file "\
+            "'#{fpath}'; previous definition is here: "\
+            "'#{@@modules[klass]}'"
+        end
+
+        # If all of that was ok, we can register the implementation.
+        @@modules[klass] = fpath
+      end
+
       private :new
 
       ##
@@ -205,12 +240,20 @@ module Unobtainium
 
       # Great, instanciate!
       @impl = driver_klass.create(@label, @options)
+
+      # Now also extend this implementation with all the modues that match
+      @@modules.each do |klass, _|
+        if klass.matches?(@impl)
+          @impl.extend(klass)
+        end
+      end
     end
 
     # Class variables have their place, rubocop... still, err on the strict
     # side and just skip this check here.
     # rubocop:disable Style/ClassVars
     @@drivers = {}
+    @@modules = {}
     # rubocop:enable Style/ClassVars
 
     # Methods that drivers must implement
@@ -218,6 +261,11 @@ module Unobtainium
       :matches?,
       :ensure_preconditions,
       :create
+    ].freeze
+
+    # Methods that driver modules must implement
+    MODULE_METHODS = [
+      :matches?
     ].freeze
   end # class Driver
 end # module Unobtainium
