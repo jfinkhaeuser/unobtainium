@@ -1,0 +1,6 @@
+{
+  "name": "Unobtainium",
+  "tagline": "Obtain the unobtainable: test code covering multiple platforms",
+  "body": "# unobtainium\r\n*Obtain the unobtainable: test code covering multiple platforms*\r\n\r\nUnobtainium wraps [Selenium](https://github.com/SeleniumHQ/selenium) and\r\n[Appium](https://github.com/appium/ruby_lib) in a simple driver abstraction\r\nso that test code can more easily cover:\r\n\r\n  - Desktop browsers\r\n  - Mobile browsers\r\n  - Mobile apps\r\n\r\nThe gem also wraps [PhantomJS](http://phantomjs.org/) for headless testing.\r\n\r\n# Credits\r\nThis gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),\r\nbut vastly less complex, and aims to stay so.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
