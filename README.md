@@ -82,6 +82,7 @@ details.
 # Development
 
 - [driver development](docs/DRIVERS.md)
+- [driver module development](docs/DRIVER_MODULES.md)
 
 # Additional Drivers
 
