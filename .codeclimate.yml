@@ -9,6 +9,7 @@ engines:
       - a8e2b4ccb258f16eda697c5f98e21823
       - 442a316695836b4f4693fe3786cd3396
       - 1c24bb5da72323796b645814cc006684
+      - 4ff1112a73f7be30ecefa7bd90fdbf5a
     config:
       languages:
       - ruby
