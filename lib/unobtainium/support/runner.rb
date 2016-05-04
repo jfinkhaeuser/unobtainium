@@ -152,6 +152,7 @@ module Unobtainium
       # Use together with Runtime class to clean up any commands at exit.
       def destroy
         kill
+        reset
       end
 
       private
