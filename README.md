@@ -94,6 +94,12 @@ details.
 - [unobtainium-kramdown](https://github.com/jfinkhaeuser/unobtainium-kramdown) is
   an open-uri-based driver for dealing with Markdown structured text.
 
+# Driver Modules
+
+- [unobtainium-multifind](https://github.com/jfinkhaeuser/unobtainium-multifind)
+  is a module providing a `#multifind` function for searching for multiple elements
+  at the same time.
+
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
 but vastly less complex, and aims to stay so.
