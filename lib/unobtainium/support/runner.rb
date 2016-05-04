@@ -65,6 +65,9 @@ module Unobtainium
           raise "Command already running!"
         end
 
+        # Reset everything
+        reset
+
         # Capture options; pipes for stdout and stderr
         @stdout, @wout = IO.pipe
         @stderr, @werr = IO.pipe
@@ -75,6 +78,13 @@ module Unobtainium
 
         @pid = spawn({}, *@command, opts)
         return @pid
+      end
+
+      ##
+      # Resets stdout, stderr, etc. - does not kill a process, see #kill
+      # instead.
+      def reset
+        cleanup(true)
       end
 
       ##
@@ -135,9 +145,6 @@ module Unobtainium
           end
           # rubocop:enable Lint/HandleExceptions
         end
-
-        # Clean up everything
-        cleanup(true)
       end
 
       ##
