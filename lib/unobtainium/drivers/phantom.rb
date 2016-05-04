@@ -125,7 +125,14 @@ module Unobtainium
             timeout -= 1
           end
           if timeout <= 0
-            raise "Timeout waiting to connect to PhantomJS!"
+            runner.kill
+            out = runner.stdout.read
+            err = runner.stderr.read
+            runner.reset
+
+            raise "Timeout waiting to connect to PhantomJS!\n"\
+              "STDOUT: #{out}\n"\
+              "STDERR: #{err}"
           end
 
           # Run Selenium against server
