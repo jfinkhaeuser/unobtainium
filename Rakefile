@@ -27,6 +27,8 @@ desc "Test all the things!"
 task :test do
   Rake::Task[:rubocop].invoke
   Rake::Task[:rspec].invoke
+  ENV['DRIVER'] = 'headless'
+  Rake::Task[:cuke].invoke
 end
 
 # Default is the test task
