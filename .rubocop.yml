@@ -27,6 +27,9 @@ Metrics/CyclomaticComplexity:
 Metrics/ClassLength:
   Max: 300
 
+Metrics/ModuleLength:
+  Max: 300
+
 # Style
 
 Style/StringLiterals:
