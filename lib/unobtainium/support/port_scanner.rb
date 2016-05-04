@@ -57,22 +57,18 @@ module Unobtainium
         end
 
         # Test a socket for each domain
-        addr = Socket.sockaddr_in(port, host)
-
         test_domains.each do |domain|
-          begin
-            sock = Socket.new(domain, :STREAM)
-            return 0 == sock.connect(addr)
-          rescue Errno::EAFNOSUPPORT
-            next # try next domain
-          rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-            return false
-          ensure
-            if not sock.nil?
-              sock.close
-            end
+          addr = get_addr(host, port, domain)
+          if addr.nil?
+            next
+          end
+
+          if test_sockaddr(addr, domain)
+            return true
           end
         end
+
+        return false
       end
 
       ##
@@ -154,6 +150,54 @@ module Unobtainium
         end
 
         return false
+      end
+
+      # Create an address for the domain. That's a little convoluted, but it
+      # avoids errors with trying to use INET addresses with INET6 and vice versa.
+      def get_addr(host, port, domain)
+        begin
+          infos = Addrinfo.getaddrinfo(host, port, domain, :STREAM)
+          infos.each do |info|
+            if info.pfamily == Socket.const_get('PF_' + domain.to_s)
+              return info.to_sockaddr
+            end
+          end
+        rescue SocketError
+          # Host does not resolve in this domain
+          return nil
+        end
+
+        return nil
+      end
+
+      # Test a particular sockaddr
+      def test_sockaddr(addr, domain)
+        sock = Socket.new(domain, :STREAM)
+
+        connected = false
+        loop do
+          begin
+            sock.connect_nonblock(addr)
+          rescue Errno::EINPROGRESS
+            if not IO.select(nil, [sock], nil, 1)
+              # Timed out, retry?
+              next
+            end
+          rescue Errno::EISCONN
+            connected = true
+            break
+          rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
+            # Could not connect
+            break
+          rescue Errno::EINVAL, Errno::EAFNOSUPPORT
+            # Unsupported protocol
+            break
+          end
+        end
+
+        sock.close
+
+        return connected
       end
     end # module PortScanner
   end # module Support

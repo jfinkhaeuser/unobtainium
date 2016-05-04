@@ -8,31 +8,32 @@ describe ::Unobtainium::Support::PortScanner do
   def connect_mock(_, addr)
     port, = Socket.unpack_sockaddr_in(addr)
     if port == 1234 or port == 4321
-      return 0
+      raise Errno::EISCONN
     end
     raise Errno::ECONNREFUSED
   end
 
   describe "port_open?" do
     it "detects an open port correctly" do
-      allow_any_instance_of(Socket).to receive(:connect).and_return(0)
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
+          Errno::EISCONN)
       expect(tester.port_open?('localhost', 1234)).to be_truthy
     end
 
     it "detects a closed port correctly" do
-      allow_any_instance_of(Socket).to receive(:connect).and_raise(
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::ECONNREFUSED)
       expect(tester.port_open?('localhost', 1234)).to be_falsy
     end
 
     it "handles a single domain parameter" do
-      allow_any_instance_of(Socket).to receive(:connect).and_raise(
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::ECONNREFUSED)
       expect(tester.port_open?('localhost', 1234, :INET)).to be_falsy
     end
 
     it "handles many domain parameters" do
-      allow_any_instance_of(Socket).to receive(:connect).and_raise(
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::ECONNREFUSED)
       expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
     end
@@ -53,7 +54,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "finds an open port in a range" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -61,7 +62,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "finds an open port in an array" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -69,7 +70,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "doesn't find an open port in a range" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -77,7 +78,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "doesn't find an open port in an array" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -85,7 +86,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "finds an open port in mixed arguments" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -101,7 +102,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "can abort after the first find" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
@@ -109,7 +110,7 @@ describe ::Unobtainium::Support::PortScanner do
     end
 
     it "can scan for closed/available ports" do
-      allow_any_instance_of(Socket).to receive(:connect) do |sock, addr|
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
