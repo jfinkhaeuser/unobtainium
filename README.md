@@ -99,6 +99,8 @@ details.
 - [unobtainium-multifind](https://github.com/jfinkhaeuser/unobtainium-multifind)
   is a module providing a `#multifind` function for searching for multiple elements
   at the same time.
+- [unobtainium-multiwait](https://github.com/jfinkhaeuser/unobtainium-multiwait)
+  based on `multifind`, simplifies waiting for an element to appear.
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
