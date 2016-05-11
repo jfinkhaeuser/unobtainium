@@ -1,0 +1,6 @@
+---
+foo_base:
+  baz: test
+bar:
+  extends: bar_base
+  foo: something
