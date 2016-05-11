@@ -70,3 +70,6 @@ Style/NumericLiterals:
 
 Style/FileName:
   Enabled: false
+
+Style/SpaceAfterNot:
+  Enabled: false
