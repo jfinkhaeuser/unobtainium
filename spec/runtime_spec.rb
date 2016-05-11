@@ -45,7 +45,8 @@ describe ::Unobtainium::Runtime do
   it "deals well with default values" do
     expect(::Unobtainium::Runtime.instance["bar"]).to be_nil
     expect { ::Unobtainium::Runtime.instance.fetch("bar") }.to raise_error(
-        KeyError)
+        KeyError
+    )
     expect(::Unobtainium::Runtime.instance.fetch("bar", 123)).to eql 123
   end
 
@@ -76,7 +77,8 @@ describe ::Unobtainium::Runtime do
   it "ignores nil objects created from a block" do
     ::Unobtainium::Runtime.instance.store_with("_nope_") { nil }
     expect { ::Unobtainium::Runtime.instance.fetch("_nope_") }.to raise_error(
-        KeyError)
+        KeyError
+    )
   end
 
   it "stores objects with :store_if" do

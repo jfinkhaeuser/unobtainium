@@ -16,25 +16,29 @@ describe ::Unobtainium::Support::PortScanner do
   describe "port_open?" do
     it "detects an open port correctly" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
-          Errno::EISCONN)
+          Errno::EISCONN
+      )
       expect(tester.port_open?('localhost', 1234)).to be_truthy
     end
 
     it "detects a closed port correctly" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
-          Errno::ECONNREFUSED)
+          Errno::ECONNREFUSED
+      )
       expect(tester.port_open?('localhost', 1234)).to be_falsy
     end
 
     it "handles a single domain parameter" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
-          Errno::ECONNREFUSED)
+          Errno::ECONNREFUSED
+      )
       expect(tester.port_open?('localhost', 1234, :INET)).to be_falsy
     end
 
     it "handles many domain parameters" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
-          Errno::ECONNREFUSED)
+          Errno::ECONNREFUSED
+      )
       expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
     end
 

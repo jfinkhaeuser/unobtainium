@@ -233,7 +233,8 @@ module Unobtainium
       # Sanitize options
       @label, @options, driver_klass = ::Unobtainium::Driver.resolve_options(
           label,
-          opts)
+          opts
+      )
 
       # Perform precondition checks of the driver class
       driver_klass.ensure_preconditions(@label, @options)
