@@ -127,6 +127,9 @@ module Unobtainium
         # Merge local configuration
         config.recursive_merge!(local_config)
 
+        # Resolve includes
+        config = resolve_includes(base, config)
+
         # Create config from the result
         cfg = Config.new(config)
 
@@ -187,6 +190,64 @@ module Unobtainium
           data = { ARRAY_KEY => data }
         end
         return data
+      end
+
+      def resolve_includes(base, config)
+        processed = []
+        includes = []
+
+        loop do
+          # Figure out includes
+          outer_inc = extract_includes(config)
+          if not outer_inc.empty?
+            includes = outer_inc
+          end
+
+          to_process = includes - processed
+
+          # Stop resolving when all includes have been processed
+          if to_process.empty?
+            break
+          end
+
+          # Load and merge the include files
+          to_process.each do |filename|
+            incfile = Pathname.new(base.dirname)
+            incfile = incfile.join(filename)
+
+            # Just try to open it, if that errors out that's ok.
+            file = incfile.open
+            contents = file.read
+
+            parsed = FILE_TO_PARSER[incfile.extname].parse(contents)
+
+            # Extract and merge includes
+            inner_inc = extract_includes(parsed)
+            includes += inner_inc
+
+            # Merge the rest
+            config.recursive_merge!(PathedHash.new(hashify(parsed)))
+
+            processed << filename
+          end
+        end
+
+        return config
+      end
+
+      def extract_includes(config)
+        # Figure out includes
+        includes = config.fetch("include", [])
+        config.delete("include")
+        includes = config.fetch(:include, includes)
+        config.delete(:include)
+
+        # We might have a simple/string include
+        if not includes.is_a? Array
+          includes = [includes]
+        end
+
+        return includes
       end
     end # class << self
 
