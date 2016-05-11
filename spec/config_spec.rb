@@ -72,6 +72,7 @@ describe ::Unobtainium::Config do
     ENV["BAZ"] = "override"
     expect(cfg["foo"]).to eql "bar"
     expect(cfg["baz"]).to eql "override"
+    ENV.delete("BAZ")
   end
 
   it "treats an empty YAML file as an empty hash" do
@@ -115,5 +116,43 @@ describe ::Unobtainium::Config do
 
     # Also ensure the "base" is set properly
     expect(cfg["drivers.base_does_not_exist.base"]).to eql "nonexistent_base"
+  end
+
+  describe "include functionality" do
+    it "can include a file" do
+      config = File.join(@data_path, 'include-simple.yml')
+      cfg = ::Unobtainium::Config.load_config(config)
+
+      expect(cfg["foo"]).to eql 42
+      expect(cfg["bar"]).to eql 'quux'
+    end
+
+    it "can include multiple files in different languages" do
+      config = File.join(@data_path, 'include-multiple.yml')
+      cfg = ::Unobtainium::Config.load_config(config)
+
+      expect(cfg["foo"]).to eql 42
+      expect(cfg["bar"]).to eql 'quux'
+      expect(cfg["baz"]).to eql 'test'
+    end
+
+    it "can resolve includes recursively" do
+      config = File.join(@data_path, 'include-recursive.yml')
+      cfg = ::Unobtainium::Config.load_config(config)
+
+      expect(cfg["foo"]).to eql 42
+      expect(cfg["bar"]).to eql 'quux'
+      expect(cfg["baz"]).to eql 'test'
+    end
+
+    it "extends configuration from across includes" do
+      config = File.join(@data_path, 'include-extend.yml')
+      cfg = ::Unobtainium::Config.load_config(config)
+
+      expect(cfg["foo.bar"]).to eql 'quux'
+      expect(cfg["foo.baz"]).to eql 'test'
+      expect(cfg["bar.foo"]).to eql 'something'
+      expect(cfg["bar.baz"]).to eql 42
+    end
   end
 end

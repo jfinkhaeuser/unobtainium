@@ -1,0 +1,5 @@
+---
+foo: 42
+include:
+  - include1.yml
+  - include2.json
