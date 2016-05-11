@@ -46,8 +46,9 @@ the `Unobtainium::World` module.
 - The `Driver` class, of course, wraps either of Appium or Selenium drivers:
 
     ```ruby
-    drv = Driver.create(:firefox) # uses Selenium
-    drv = Driver.create(:android) # uses Appium
+    drv = Driver.create(:firefox) # uses Selenium and Firefox
+    drv = Driver.create(:android) # uses Appium (browser or device)
+    drv = Driver.create(:phantomjs) # use Selenium and PhantomJS
 
     drv.navigate.to "..." # delegates to Selenium or Appium
     ```
