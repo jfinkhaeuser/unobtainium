@@ -10,6 +10,5 @@
 require 'unobtainium/version'
 
 require 'unobtainium/driver'
-require 'unobtainium/config'
 require 'unobtainium/runtime'
 require 'unobtainium/world'
