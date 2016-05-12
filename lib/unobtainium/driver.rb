@@ -125,7 +125,7 @@ module Unobtainium
         label = label.to_sym
 
         if not opts.nil?
-          if not (opts.is_a? Hash or opts.is_a? ::Unobtainium::PathedHash)
+          if not opts.is_a? Hash
             raise ArgumentError, "The second argument is expected to be an "\
               "options Hash!"
           end
