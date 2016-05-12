@@ -82,6 +82,12 @@ describe ::Unobtainium::Driver do
     it "creates a driver correctly" do
       ::Unobtainium::Driver.create(:mock)
     end
+
+    it "does not create a driver with a nil label" do
+      expect do
+        ::Unobtainium::Driver.create(nil)
+      end.to raise_error(ArgumentError)
+    end
   end
 
   describe "driver behaviour" do
