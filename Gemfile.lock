@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     unobtainium (0.5.1)
-      collapsium (~> 0.1)
       collapsium-config (~> 0.1)
       sys-proctable (~> 1.0)
 
