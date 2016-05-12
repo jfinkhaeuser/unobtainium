@@ -29,16 +29,6 @@ You can use unobtainium on its own, or use it as part of a
 Unobtainium's functionality is in standalone classes, but it's all combined in
 the `Unobtainium::World` module.
 
-- The `PathedHash` class extends `Hash` by allowing paths to nested values, e.g.:
-
-    ```ruby
-    h = PathedHash.new { "foo" => { "bar" => 42 }}
-    h["foo.bar"] == 42 # true
-    ```
-
-- The `Config` class is a `PathedHash`, but also reads JSON or YAML files to
-  initialize itself with values. See the documentation on [configuration features](docs/CONFIGURATION.md)
-  for details.
 - The `Runtime` class is a singleton and a `Hash`-like container (but simpler),
   that destroys all of its contents at the end of a script, calling custom
   destructors if required. That allows for clean teardown and avoids everything
@@ -52,6 +42,9 @@ the `Unobtainium::World` module.
 
     drv.navigate.to "..." # delegates to Selenium or Appium
     ```
+
+See the documentation on [configuration features](docs/CONFIGURATION.md) for
+details on configuration.
 
 ## World
 
