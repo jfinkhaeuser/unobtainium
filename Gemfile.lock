@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     unobtainium (0.5.1)
+      collapsium-config (~> 0.1)
       sys-proctable (~> 1.0)
 
 GEM
@@ -20,6 +21,9 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     codeclimate-test-reporter (0.5.0)
       simplecov (>= 0.7.1, < 1.0.0)
+    collapsium (0.1.0)
+    collapsium-config (0.1.1)
+      collapsium (~> 0.1)
     cucumber (2.3.3)
       builder (>= 2.1.2)
       cucumber-core (~> 1.4.0)
