@@ -54,6 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "cucumber"
 
   spec.add_dependency "sys-proctable", "~> 1.0"
+  spec.add_dependency "collapsium", "~> 0.1"
   spec.add_dependency "collapsium-config", "~> 0.1"
 end
 # rubocop:enable Style/SpaceAroundOperators
