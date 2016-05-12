@@ -1,7 +1,0 @@
----
-include: extend.yml
-foo:
-  extends: foo_base
-  bar: quux
-bar_base:
-  baz: 42

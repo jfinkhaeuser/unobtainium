@@ -1,7 +1,0 @@
----
-asdf: 1
-foo:
-  bar: baz
-  quux:
-    - 1
-    - 42

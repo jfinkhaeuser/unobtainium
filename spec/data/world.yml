@@ -1,5 +1,0 @@
----
-drivers:
-  mock:
-    option: value
-driver: mock
