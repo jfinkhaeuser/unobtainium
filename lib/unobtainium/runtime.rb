@@ -27,9 +27,11 @@ module Unobtainium
 
       # Create our own finalizer
       ObjectSpace.define_finalizer(self) do
+        # :nocov:
         @objects.keys.each do |key|
           delete(key)
         end
+        # :nocov:
       end
     end
 

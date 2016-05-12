@@ -37,17 +37,19 @@ describe ::Unobtainium::Driver do
     ::Unobtainium::Driver.register_implementation(MockDriver, "mock_driver.rb")
   end
 
-  it "refuses to register a driver with missing methods" do
-    expect do
-      ::Unobtainium::Driver.register_implementation(FakeDriver, __FILE__)
-    end.to raise_error(LoadError)
-  end
+  describe "driver registration" do
+    it "refuses to register a driver with missing methods" do
+      expect do
+        ::Unobtainium::Driver.register_implementation(FakeDriver, __FILE__)
+      end.to raise_error(LoadError)
+    end
 
-  it "refuses to register the same driver twice from different locations" do
-    expect do
-      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '1')
-      ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '2')
-    end.to raise_error(LoadError)
+    it "refuses to register the same driver twice from different locations" do
+      expect do
+        ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '1')
+        ::Unobtainium::Driver.register_implementation(MockDriver, __FILE__ + '2')
+      end.to raise_error(LoadError)
+    end
   end
 
   it "verifies arguments" do
@@ -66,29 +68,39 @@ describe ::Unobtainium::Driver do
     end.to raise_error(ArgumentError)
   end
 
-  it "creates no driver with an unknown label" do
-    expect { ::Unobtainium::Driver.create(:nope) }.to raise_error(LoadError)
+  describe "driver creation" do
+    it "creates no driver with an unknown label" do
+      expect { ::Unobtainium::Driver.create(:nope) }.to raise_error(LoadError)
+    end
+
+    it "fails preconditions correctly" do
+      expect do
+        ::Unobtainium::Driver.create(:raise_mock)
+      end.to raise_error(RuntimeError)
+    end
+
+    it "creates a driver correctly" do
+      ::Unobtainium::Driver.create(:mock)
+    end
+
+    it "does not create a driver with a nil label" do
+      expect do
+        ::Unobtainium::Driver.create(nil)
+      end.to raise_error(ArgumentError)
+    end
   end
 
-  it "fails preconditions correctly" do
-    expect do
-      ::Unobtainium::Driver.create(:raise_mock)
-    end.to raise_error(RuntimeError)
-  end
+  describe "driver behaviour" do
+    it "delegates to created driver class" do
+      drv = ::Unobtainium::Driver.create(:mock, foo: 42)
+      expect(drv.respond_to?(:passed_options)).to be_truthy
+      _ = drv.passed_options
+    end
 
-  it "creates a driver correctly" do
-    ::Unobtainium::Driver.create(:mock)
-  end
-
-  it "delegates to created driver class" do
-    drv = ::Unobtainium::Driver.create(:mock, foo: 42)
-    expect(drv.respond_to?(:passed_options)).to be_truthy
-    _ = drv.passed_options
-  end
-
-  it "passes options through correctly" do
-    drv = ::Unobtainium::Driver.create(:mock, foo: 42)
-    expect(drv.passed_options).to eql foo: 42
+    it "passes options through correctly" do
+      drv = ::Unobtainium::Driver.create(:mock, foo: 42)
+      expect(drv.passed_options).to eql foo: 42
+    end
   end
 
   describe 'modules' do
