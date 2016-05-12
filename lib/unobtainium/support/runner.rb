@@ -131,10 +131,6 @@ module Unobtainium
           to_send += children.collect(&:pid)
         end
 
-        if to_send.empty?
-          raise "This should not happen. I have no pids to send a signal to!"
-        end
-
         # Alright, send the signal!
         to_send.each do |pid|
           # rubocop:disable Lint/HandleExceptions

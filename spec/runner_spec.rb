@@ -63,4 +63,23 @@ describe ::Unobtainium::Support::Runner do
     expect { runner.start }.to raise_error(RuntimeError)
     runner.wait
   end
+
+  it "kills when destroyed" do
+    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner.start
+    expect(runner.pid).not_to be_nil
+    runner.destroy
+    expect(runner.pid).to be_nil
+  end
+
+  it "cannot be killed twice" do
+    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner.start
+    expect(runner.pid).not_to be_nil
+    runner.kill
+
+    expect do
+      runner.kill
+    end.to raise_error
+  end
 end
