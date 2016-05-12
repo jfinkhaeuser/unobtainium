@@ -8,8 +8,9 @@
 #
 require 'unobtainium'
 
+require 'collapsium-config'
+
 require 'unobtainium/driver'
-require 'unobtainium/config'
 require 'unobtainium/runtime'
 
 module Unobtainium
@@ -17,32 +18,48 @@ module Unobtainium
   # The World module combines other modules, defining simpler entry points
   # into the gem's functionality.
   module World
+
     ##
-    # Modules can have class methods, too.
+    # Modules can have class methods, too, but it's a little more verbose to
+    # provide them.
     module ClassMethods
-      # Set the config file path.
+      # Set the configuration file
       def config_file=(name)
-        @config_file = name
+        ::Collapsium::Config.config_file = name
       end
 
       # @return [String] the config file path, defaulting to 'config/config.yml'
       def config_file
-        return @config_file || "config/config.yml"
+        return ::Collapsium::Config.config_file
+      end
+
+      # In order for Unobtainium::World to include Collapsium::Config
+      # functionality, it has to be inherited when the former is
+      # included...
+      def included(klass)
+        set_config_path_default
+
+        klass.class_eval do
+          include ::Collapsium::Config
+        end
+      end
+
+      # ... and when it's extended.
+      def extended(world)
+        set_config_path_default
+
+        world.extend(::Collapsium::Config)
+      end
+
+      def set_config_path_default
+        # Override collapsium-config's default config path
+        if ::Collapsium::Config.config_file == \
+           ::Collapsium::Config::DEFAULT_CONFIG_PATH
+          ::Collapsium::Config.config_file = 'config/config.yml'
+        end
       end
     end # module ClassMethods
     extend ClassMethods
-
-    ##
-    # Return the global configuration, loaded from `World#config_file`
-    def config
-      return ::Unobtainium::Runtime.instance.store_with_if(:config) do
-        begin
-          ::Unobtainium::Config.load_config(::Unobtainium::World.config_file)
-        rescue Errno::ENOENT
-          {}
-        end
-      end
-    end
 
     ##
     # (see Driver#create)
