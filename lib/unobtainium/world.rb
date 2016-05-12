@@ -46,9 +46,11 @@ module Unobtainium
 
       # ... and when it's extended.
       def extended(world)
+        # :nocov:
         set_config_path_default
 
         world.extend(::Collapsium::Config)
+        # :nocov:
       end
 
       def set_config_path_default
@@ -106,12 +108,14 @@ module Unobtainium
       # gets created or not.
       at_end = config.fetch("at_end", "quit")
       dtor = proc do |the_driver|
+        # :nocov:
         if the_driver.nil?
           return
         end
 
         meth = at_end.to_sym
         the_driver.send(meth)
+        # :nocov:
       end
       return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
         ::Unobtainium::Driver.create(label, options)

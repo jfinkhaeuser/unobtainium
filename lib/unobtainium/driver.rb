@@ -166,11 +166,15 @@ module Unobtainium
             klass = Object.const_get(klassname)
             Driver.register_implementation(klass, fpath)
           rescue LoadError => err
+            # :nocov:
             raise LoadError, "#{err.message}: unknown problem loading driver, "\
               "aborting!"
+            # :nocov:
           rescue NameError => err
+            # :nocov:
             raise LoadError, "#{err.message}: unknown problem loading driver, "\
               "aborting!"
+            # :nocov:
           end
         end
       end
@@ -222,7 +226,9 @@ module Unobtainium
       if not @impl.nil? and @impl.respond_to?(meth)
         return @impl.send(meth.to_s, *args, &block)
       end
+      # :nocov:
       return super
+      # :nocov:
     end
 
     private
