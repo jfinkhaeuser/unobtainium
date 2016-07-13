@@ -62,6 +62,12 @@ module Unobtainium
           normalized = normalize_label(label)
           options = ::Collapsium::UberHash.new(options || {})
 
+          # Merge 'caps' and 'desired_capabilities', letting the former win
+          options[:caps] = ::Collapsium::UberHash.new(options[:desired_capabilities])
+            .recursive_merge(options[:caps])
+          options.delete(:desired_capabilities)
+          options.delete('desired_capabilities')
+
           # The label specifies the platform, if no other platform is given.
           if options['caps.platformName']
             options['caps.platformName'] = normalized.to_s
