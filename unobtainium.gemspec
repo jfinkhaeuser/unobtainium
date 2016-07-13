@@ -43,17 +43,19 @@ Gem::Specification.new do |spec|
                        "'phantomjs'"
 
   spec.add_development_dependency "bundler", "~> 1.12"
-  spec.add_development_dependency "rubocop", "~> 0.40"
-  spec.add_development_dependency "rake", "~> 11.1"
-  spec.add_development_dependency "rspec", "~> 3.4"
-  spec.add_development_dependency "simplecov", "~> 0.11"
-  spec.add_development_dependency "yard", "~> 0.8"
+  spec.add_development_dependency "rubocop", "~> 0.41"
+  spec.add_development_dependency "rake", "~> 11.2"
+  spec.add_development_dependency "rspec", "~> 3.5"
+  spec.add_development_dependency "simplecov", "~> 0.12"
+  spec.add_development_dependency "yard", "~> 0.9"
   spec.add_development_dependency "appium_lib"
   spec.add_development_dependency "selenium-webdriver"
+  spec.add_development_dependency "chromedriver-helper"
   spec.add_development_dependency "phantomjs"
   spec.add_development_dependency "cucumber"
 
-  spec.add_dependency "sys-proctable", "~> 1.0"
+  spec.add_dependency "sys-proctable", "~> 1.1"
+  spec.add_dependency "ptools", "~> 1.3"
   spec.add_dependency "collapsium-config", "~> 0.1"
 end
 # rubocop:enable Style/SpaceAroundOperators
