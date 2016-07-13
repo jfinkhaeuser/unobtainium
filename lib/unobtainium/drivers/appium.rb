@@ -21,10 +21,8 @@ module Unobtainium
     class Appium
       # Recognized labels for matching the driver
       LABELS = {
-        appium: [],
         ios: [:iphone, :ipad],
         android: [],
-        appium_remote: [:android_remote, :ios_remote],
       }.freeze
 
       # Browser matches for some platforms
@@ -72,10 +70,12 @@ module Unobtainium
           # Make the appium driver behave a little more like Selenium by using
           # the :url key if the normalized label is remote, and setting
           # appropriate options.
-          if :appium_remote == normalized and options['url']
-            if not options['appium_lib.server_url']
-              options['appium_lib.server_url'] = options['url']
-            end
+          set_url = options['appium_lib.server_url']
+          if set_url and not set_url == options['url']
+            warn "You have the remote URL '#{set_url}' set in your options, "\
+              "so we're not replacing it with '#{options['url']}'!"
+          else
+            options['appium_lib.server_url'] = options['url']
           end
 
           # If no app is given, but a browser is requested, we can supplement
