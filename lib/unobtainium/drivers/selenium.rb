@@ -22,9 +22,17 @@ module Unobtainium
         firefox: [:ff,],
         internet_explorer: [:internetexplorer, :explorer, :ie,],
         safari: [],
-        chrome: [:chromium],
+        chrome: [],
+        chromium: [],
         remote: [],
       }.freeze
+
+      # When :chromium is selected, search for these executables. The
+      # resulting label will be :chrome, but with an executable path
+      # set in the options.
+      CHROMIUM_EXECUTABLES = [
+        'chromium-browser'
+      ].freeze
 
       class << self
         include ::Unobtainium::Support::Utility
@@ -58,6 +66,42 @@ module Unobtainium
           end
 
           options = new_opts
+
+          normalized = normalize_label(label)
+          if :chromium == normalized
+            # Try to find a chromium binary
+            binary = nil
+            require 'ptools'
+            CHROMIUM_EXECUTABLES.each do |name|
+              location = File.which(name)
+              if not location.nil?
+                binary = location
+                break
+              end
+            end
+
+            # If we found a chromium binary, we can modify the options.
+            # Otherwise, we don't do a thing and let selenium fail.
+            if not binary.nil?
+              if not options.key?(:desired_capabilities)
+                options[:desired_capabilities] = {}
+              end
+              if not options[:desired_capabilities].key?('chromeOptions')
+                options[:desired_capabilities]['chromeOptions'] = {}
+              end
+              if options[:desired_capabilities]['chromeOptions']['binary'] and not options[:desired_capabilities]['chromeOptions']['binary'] == binary
+                # There's already a binary set. We should warn about this, but
+                # otherwise leave this choice.
+                warn "Not replacing the chrome binary '#{options[:desired_capabilities]['chromeOptions']['binary']}' with '#{binary}'!"
+              else
+                options[:desired_capabilities]['chromeOptions']['binary'] = binary
+              end
+            end
+
+            # Selenium doesn't recognize :chromium, but :chrome with the above
+            # options works.
+            label = :chrome
+          end
 
           return label, options
         end
