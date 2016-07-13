@@ -24,7 +24,7 @@ module Unobtainium
         safari: [],
         chrome: [],
         chromium: [],
-        remote: [],
+        selenium_remote: [:remote],
       }.freeze
 
       # When :chromium is selected, search for these executables. The
