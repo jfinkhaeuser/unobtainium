@@ -7,6 +7,8 @@
 # All rights reserved.
 #
 
+require 'collapsium'
+
 require_relative '../support/util'
 
 module Unobtainium
@@ -24,7 +26,6 @@ module Unobtainium
         safari: [],
         chrome: [],
         chromium: [],
-        selenium_remote: [:remote],
       }.freeze
 
       # When :chromium is selected, search for these executables. The
@@ -57,51 +58,16 @@ module Unobtainium
         ##
         # Selenium really wants symbol keys for the options
         def resolve_options(label, options)
-          new_opts = {}
-
-          if not options.nil?
-            options.each do |key, value|
-              new_opts[key.to_sym] = value
-            end
-          end
-
-          options = new_opts
-
+          # Normalize label and options
           normalized = normalize_label(label)
-          if :chromium == normalized
-            # Try to find a chromium binary
-            binary = nil
-            require 'ptools'
-            CHROMIUM_EXECUTABLES.each do |name|
-              location = File.which(name)
-              if not location.nil?
-                binary = location
-                break
-              end
-            end
+          options = ::Collapsium::UberHash.new(options || {})
 
-            # If we found a chromium binary, we can modify the options.
-            # Otherwise, we don't do a thing and let selenium fail.
-            if not binary.nil?
-              if not options.key?(:desired_capabilities)
-                options[:desired_capabilities] = {}
-              end
-              if not options[:desired_capabilities].key?('chromeOptions')
-                options[:desired_capabilities]['chromeOptions'] = {}
-              end
-              if options[:desired_capabilities]['chromeOptions']['binary'] and not options[:desired_capabilities]['chromeOptions']['binary'] == binary
-                # There's already a binary set. We should warn about this, but
-                # otherwise leave this choice.
-                warn "Not replacing the chrome binary '#{options[:desired_capabilities]['chromeOptions']['binary']}' with '#{binary}'!"
-              else
-                options[:desired_capabilities]['chromeOptions']['binary'] = binary
-              end
-            end
+          # Chromium is chrome, but with a different binary. Help with that.
+          label, options = supplement_chromium(normalized, options)
 
-            # Selenium doesn't recognize :chromium, but :chrome with the above
-            # options works.
-            label = :chrome
-          end
+          # Selenium expects the first level keys to be symbols *only*, so
+          # indifferent access from UberHash isn't good. We have to fix that.
+          options = fix_options(options)
 
           return label, options
         end
@@ -111,6 +77,61 @@ module Unobtainium
         def create(label, options)
           driver = ::Selenium::WebDriver.for(normalize_label(label), options)
           return driver
+        end
+
+        private
+
+        ##
+        # If the driver was :chromium, try to use the :chrome driver with
+        # options pointing to the chromium binary.
+        def supplement_chromium(label, options)
+          # Only applies to :chromium
+          if :chromium != label
+            return label, options
+          end
+
+          # Try to find a chromium binary
+          binary = nil
+          require 'ptools'
+          CHROMIUM_EXECUTABLES.each do |name|
+            location = File.which(name)
+            if not location.nil?
+              binary = location
+              break
+            end
+          end
+
+          # If we found a chromium binary, we can modify the options.
+          # Otherwise, we don't do a thing and let selenium fail.
+          if binary.nil?
+            return label, options
+          end
+
+          set_binary = options['desired_capabilities.chromeOptions.binary']
+          if set_binary and not set_binary == binary
+            # There's already a binary set. We should warn about this, but
+            # otherwise leave this choice.
+            warn "You have the chrome binary '#{set_binary}' set in your "\
+              "options, so we're not replacing it with '#{binary}'!"
+          else
+            options['desired_capabilities.chromeOptions.binary'] = binary
+          end
+
+          # Selenium doesn't recognize :chromium, but :chrome with the above
+          # options works.
+          return :chrome, options
+        end
+
+        # Selenium expects the first level keys to be symbols *only*, so
+        # indifferent access from UberHash isn't good. We have to fix that.
+        def fix_options(options)
+          result = {}
+
+          options.each do |key, value|
+            result[key.to_sym] = value
+          end
+
+          return result
         end
       end # class << self
     end # class Selenium

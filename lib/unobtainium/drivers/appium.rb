@@ -7,6 +7,8 @@
 # All rights reserved.
 #
 
+require 'collapsium'
+
 require_relative '../support/util'
 
 module Unobtainium
@@ -22,6 +24,7 @@ module Unobtainium
         appium: [],
         ios: [:iphone, :ipad],
         android: [],
+        appium_remote: [:android_remote, :ios_remote],
       }.freeze
 
       # Browser matches for some platforms
@@ -57,18 +60,22 @@ module Unobtainium
         ##
         # Sanitize options, and expand the :browser key, if present.
         def resolve_options(label, options)
-          # The label specifies the platform, if no other platform is given.
+          # Normalize label and options
           normalized = normalize_label(label)
+          options = ::Collapsium::UberHash.new(options || {})
 
-          if not options.is_a? Hash
-            options = {}
-          end
-          if not options['caps'].is_a? Hash
-            options['caps'] = {}
+          # The label specifies the platform, if no other platform is given.
+          if options['caps.platformName']
+            options['caps.platformName'] = normalized.to_s
           end
 
-          if options['caps']['platformName'].nil?
-            options['caps']['platformName'] = normalized.to_s
+          # Make the appium driver behave a little more like Selenium by using
+          # the :url key if the normalized label is remote, and setting
+          # appropriate options.
+          if :appium_remote == normalized and options['url']
+            if not options['appium_lib.server_url']
+              options['appium_lib.server_url'] = options['url']
+            end
           end
 
           # If no app is given, but a browser is requested, we can supplement
@@ -99,7 +106,7 @@ module Unobtainium
           browser = options['browser'].downcase.to_sym
 
           # Platform
-          platform = options['caps']['platformName'].to_s.downcase.to_sym
+          platform = options['caps.platformName'].to_s.downcase.to_sym
 
           # If we have supplement data matching the platform and browser, great!
           data = BROWSER_MATCHES[platform][browser]
@@ -109,12 +116,9 @@ module Unobtainium
 
           # We do have to check that we're not overwriting any of the keys.
           data.each do |key, value|
-            key_s = key.to_s
             option_value = nil
             if options['caps'].key?(key)
               option_value = options['caps'][key]
-            elsif options['caps'].key?(key_s)
-              option_value = options['caps'][key_s]
             end
 
             if option_value.nil? or option_value == value

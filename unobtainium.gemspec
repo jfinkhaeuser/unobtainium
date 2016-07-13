@@ -56,6 +56,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sys-proctable", "~> 1.1"
   spec.add_dependency "ptools", "~> 1.3"
+  spec.add_dependency "collapsium", "~> 0.3"
   spec.add_dependency "collapsium-config", "~> 0.1"
 end
 # rubocop:enable Style/SpaceAroundOperators
