@@ -63,8 +63,9 @@ module Unobtainium
           options = ::Collapsium::UberHash.new(options || {})
 
           # Merge 'caps' and 'desired_capabilities', letting the former win
-          options[:caps] = ::Collapsium::UberHash.new(options[:desired_capabilities])
-            .recursive_merge(options[:caps])
+          options[:caps] =
+            ::Collapsium::UberHash.new(options[:desired_capabilities])
+                                  .recursive_merge(options[:caps])
           options.delete(:desired_capabilities)
           options.delete('desired_capabilities')
 
