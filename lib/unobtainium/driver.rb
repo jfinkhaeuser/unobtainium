@@ -186,15 +186,12 @@ module Unobtainium
       def get_driver(label)
         # Of all the loaded classes, choose the first (unsorted) to match the
         # requested driver label
-        impl = nil
         @@drivers.keys.each do |klass|
           if klass.matches?(label)
-            impl = klass
-            break
+            return klass
           end
         end
-
-        return impl
+        return nil
       end
     end # class << self
 
