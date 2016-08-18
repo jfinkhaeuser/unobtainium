@@ -107,7 +107,7 @@ describe ::Unobtainium::Driver do
     it 'will register a module' do
       expect do
         ::Unobtainium::Driver.register_module(TestModule, __FILE__)
-      end.not_to raise_error(LoadError)
+      end.not_to raise_error
     end
 
     it 'refuses to register the same module twice' do
@@ -126,7 +126,7 @@ describe ::Unobtainium::Driver do
     it 'extends a driver with a registered module' do
       expect do
         ::Unobtainium::Driver.register_module(TestModule, __FILE__)
-      end.not_to raise_error(LoadError)
+      end.not_to raise_error
 
       drv = ::Unobtainium::Driver.create(:mock)
 
@@ -137,7 +137,7 @@ describe ::Unobtainium::Driver do
       expect do
         ::Unobtainium::Driver.register_module(TestModule, __FILE__)
         ::Unobtainium::Driver.register_module(NonMatchingTestModule, __FILE__)
-      end.not_to raise_error(LoadError)
+      end.not_to raise_error
 
       drv = ::Unobtainium::Driver.create(:mock)
 

@@ -59,7 +59,7 @@ describe ::Unobtainium::Support::Runner do
 
   it "refuses to run the command twice without ending it first" do
     runner = ::Unobtainium::Support::Runner.new("foo", %w(ls -l))
-    expect { runner.start }.not_to raise_error(RuntimeError)
+    expect { runner.start }.not_to raise_error
     expect { runner.start }.to raise_error(RuntimeError)
     runner.wait
   end
@@ -80,6 +80,6 @@ describe ::Unobtainium::Support::Runner do
 
     expect do
       runner.kill
-    end.to raise_error
+    end.to raise_error(RuntimeError)
   end
 end
