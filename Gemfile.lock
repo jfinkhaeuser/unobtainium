@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     unobtainium (0.8.0)
-      collapsium (~> 0.3)
-      collapsium-config (~> 0.1)
+      collapsium (~> 0.4)
+      collapsium-config (~> 0.2)
       ptools (~> 1.3)
       sys-proctable (~> 1.1)
 
@@ -28,9 +28,9 @@ GEM
       nokogiri (~> 1.6)
     codeclimate-test-reporter (0.6.0)
       simplecov (>= 0.7.1, < 1.0.0)
-    collapsium (0.3.0)
-    collapsium-config (0.1.1)
-      collapsium (~> 0.1)
+    collapsium (0.4.1)
+    collapsium-config (0.2.1)
+      collapsium (~> 0.4)
     cucumber (2.4.0)
       builder (>= 2.1.2)
       cucumber-core (~> 1.5.0)
@@ -66,7 +66,7 @@ GEM
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
       rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.1)
+    rspec-core (3.5.2)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -75,7 +75,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    rubocop (0.41.2)
+    rubocop (0.42.0)
       parser (>= 2.3.1.1, < 3.0)
       powerpack (~> 0.1)
       rainbow (>= 1.99.1, < 3.0)
@@ -93,10 +93,10 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     sys-proctable (1.1.1)
-    tomlrb (1.2.2)
+    tomlrb (1.2.3)
     unicode-display_width (1.1.0)
     websocket (1.2.3)
-    yard (0.9.0)
+    yard (0.9.5)
 
 PLATFORMS
   ruby
@@ -110,7 +110,7 @@ DEPENDENCIES
   phantomjs
   rake (~> 11.2)
   rspec (~> 3.5)
-  rubocop (~> 0.41)
+  rubocop (~> 0.42)
   selenium-webdriver
   simplecov (~> 0.12)
   unobtainium!

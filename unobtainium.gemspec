@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
                        "'phantomjs'"
 
   spec.add_development_dependency "bundler", "~> 1.12"
-  spec.add_development_dependency "rubocop", "~> 0.41"
+  spec.add_development_dependency "rubocop", "~> 0.42"
   spec.add_development_dependency "rake", "~> 11.2"
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "simplecov", "~> 0.12"
@@ -56,8 +56,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sys-proctable", "~> 1.1"
   spec.add_dependency "ptools", "~> 1.3"
-  spec.add_dependency "collapsium", "~> 0.3"
-  spec.add_dependency "collapsium-config", "~> 0.1"
+  spec.add_dependency "collapsium", "~> 0.4"
+  spec.add_dependency "collapsium-config", "~> 0.2"
 end
 # rubocop:enable Style/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
