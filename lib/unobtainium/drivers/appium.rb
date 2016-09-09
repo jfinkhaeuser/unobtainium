@@ -81,7 +81,7 @@ module Unobtainium
           if set_url and options['url'] and not set_url == options['url']
             warn "You have the remote URL '#{set_url}' set in your options, "\
               "so we're not replacing it with '#{options['url']}'!"
-          else
+          elsif not set_url
             options['appium_lib.server_url'] = options['url']
           end
 
