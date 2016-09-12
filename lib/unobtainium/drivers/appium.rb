@@ -19,6 +19,60 @@ module Unobtainium
     ##
     # Driver implementation wrapping the appium_lib gem.
     class Appium
+      ##
+      # Proxy for the actual Appium driver.
+      #
+      # There's an unfortunate disparity of functionality between the
+      # Appium::Driver class, and the Selenium::WebDriver class. For maximum
+      # compability, we want the latter's functionality. But for maximum
+      # mobile functionality, we want the former.
+      #
+      # The DriverProxy class takes this into account when forwarding
+      # requests.
+      class DriverProxy
+        ##
+        # Initialize
+        def initialize(driver, compatibility = true)
+          @appium_driver = driver
+          @selenium_driver = driver.start_driver
+
+          # Prioritize the two different drivers according to whether
+          # compatibility with Selenium is more desirable than functionality.
+          # Note that this only matters when both classes implement the same
+          # methods! Differently named methods will always be supported either
+          # way.
+          if compatibility
+            @drivers = [@selenium_driver, @appium_driver]
+          else
+            @drivers = [@appium_driver, @selenium_driver]
+          end
+        end
+
+        ##
+        # Map any missing method to the driver implementation
+        def respond_to_missing?(meth, include_private = false)
+          @drivers.each do |driver|
+            if not driver.nil? and driver.respond_to?(meth, include_private)
+              return true
+            end
+          end
+          return super
+        end
+
+        ##
+        # Map any missing method to the driver implementation
+        def method_missing(meth, *args, &block)
+          @drivers.each do |driver|
+            if not driver.nil? and driver.respond_to?(meth)
+              return driver.send(meth.to_s, *args, &block)
+            end
+          end
+          # :nocov:
+          return super
+          # :nocov:
+        end
+      end
+
       # Recognized labels for matching the driver
       LABELS = {
         ios: [:iphone, :ipad],
@@ -95,9 +149,14 @@ module Unobtainium
         ##
         # Create and return a driver instance
         def create(_, options)
-          # Create the driver
-          driver = ::Appium::Driver.new(options).start_driver
-          return driver
+          # Determine compatibility option
+          compat = options.fetch(:webdriver_compatibility, true)
+          options.delete(:webdriver_compatibility)
+
+          # Create & return proxy
+          driver = ::Appium::Driver.new(options)
+          result = DriverProxy.new(driver, compat)
+          return result
         end
 
         private
