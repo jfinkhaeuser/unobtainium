@@ -31,6 +31,7 @@ module Unobtainium
       # requests.
       class DriverProxy
         ##
+        attr_reader :appium_driver, :selenium_driver
         # Initialize
         def initialize(driver, compatibility = true)
           @appium_driver = driver
