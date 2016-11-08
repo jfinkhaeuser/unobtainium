@@ -127,5 +127,48 @@ describe ::Unobtainium::Drivers::Phantom do
           raise_error(RuntimeError)
       end
     end
+
+    context "driver ID" do
+      it "sets a driver ID" do
+        allow(tester).to receive(:scan) { |*_| [9134] }
+        _, resolved = tester.resolve_options(:phantomjs, nil)
+
+        expect(resolved['unobtainium_instance_id']).not_to be_nil
+      end
+
+      it "changes IDs when options change" do
+        opts = {
+          phantomjs: {
+            scheme: 'noodle',
+            port: 1234,
+          },
+        }
+        _, resolved1 = tester.resolve_options(:phantomjs, opts)
+
+        opts = opts.dup
+        opts[:phantomjs][:port] = 8888
+        _, resolved2 = tester.resolve_options(:phantomjs, opts)
+
+        expect(resolved1['unobtainium_instance_id']).not_to eql \
+          resolved2['unobtainium_instance_id']
+      end
+
+      it "does not overwrite IDs even when options change" do
+        opts = {
+          phantomjs: {
+            scheme: 'noodle',
+            port: 1234,
+          },
+        }
+        _, resolved1 = tester.resolve_options(:phantomjs, opts)
+
+        opts = resolved1.dup
+        opts[:phantomjs][:port] = 8888
+        _, resolved2 = tester.resolve_options(:phantomjs, opts)
+
+        expect(resolved1['unobtainium_instance_id']).to eql \
+          resolved2['unobtainium_instance_id']
+      end
+    end
   end
 end
