@@ -64,7 +64,8 @@ module Unobtainium
 
           # Merge 'caps' and 'desired_capabilities', letting the latter win
           options[:desired_capabilities] =
-            ::Collapsium::UberHash.new(options[:caps])
+            ::Collapsium::UberHash.new(options['caps'])
+                                  .recursive_merge(options[:caps])
                                   .recursive_merge(options[:desired_capabilities])
           options.delete(:caps)
           options.delete('caps')
@@ -82,8 +83,10 @@ module Unobtainium
         ##
         # Create and return a driver instance
         def create(label, options)
+          # :nocov:
           driver = ::Selenium::WebDriver.for(normalize_label(label), options)
           return driver
+          # :nocov:
         end
 
         private
