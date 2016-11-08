@@ -12,6 +12,7 @@ require 'collapsium-config'
 
 require 'unobtainium/driver'
 require 'unobtainium/runtime'
+require 'unobtainium/support/identifiers'
 
 module Unobtainium
   ##
@@ -63,6 +64,8 @@ module Unobtainium
     end # module ClassMethods
     extend ClassMethods
 
+    include ::Unobtainium::Support::Identifiers
+
     ##
     # (see Driver#create)
     #
@@ -108,10 +111,10 @@ module Unobtainium
 
       # Create a key for the label and options. This should always
       # return the same key for the same label and options.
-      key = { label: label, options: options }
-      require 'digest/sha1'
-      key = Digest::SHA1.hexdigest(key.to_s)
-      key = "driver-#{key}"
+      key = options['unobtainum_instance_id']
+      if key.nil?
+        key = identifier('driver', label, options)
+      end
 
       # Only create a driver with this exact configuration once. Unfortunately
       # We'll have to bind the destructor to whatever configuration exists at
