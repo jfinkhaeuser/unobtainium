@@ -68,9 +68,7 @@ module Unobtainium
               return driver.send(meth.to_s, *args, &block)
             end
           end
-          # :nocov:
           return super
-          # :nocov:
         end
       end
 
@@ -119,13 +117,14 @@ module Unobtainium
 
           # Merge 'caps' and 'desired_capabilities', letting the former win
           options[:caps] =
-            ::Collapsium::UberHash.new(options[:desired_capabilities])
+            ::Collapsium::UberHash.new(options['desired_capabilities'])
+                                  .recursive_merge(options[:desired_capabilities])
                                   .recursive_merge(options[:caps])
           options.delete(:desired_capabilities)
           options.delete('desired_capabilities')
 
           # The label specifies the platform, if no other platform is given.
-          if options['caps.platformName']
+          if not options['caps.platformName']
             options['caps.platformName'] = normalized.to_s
           end
 
@@ -144,12 +143,14 @@ module Unobtainium
           # some information
           options = supplement_browser(options)
 
-          return label, options
+          return normalized, options
         end
 
         ##
         # Create and return a driver instance
         def create(_, options)
+          # :nocov:
+
           # Determine compatibility option
           compat = options.fetch(:webdriver_compatibility, true)
           options.delete(:webdriver_compatibility)
@@ -158,6 +159,7 @@ module Unobtainium
           driver = ::Appium::Driver.new(options)
           result = DriverProxy.new(driver, compat)
           return result
+          # :nocov:
         end
 
         private
@@ -176,7 +178,7 @@ module Unobtainium
           platform = options['caps.platformName'].to_s.downcase.to_sym
 
           # If we have supplement data matching the platform and browser, great!
-          data = BROWSER_MATCHES[platform][browser]
+          data = (BROWSER_MATCHES[platform] || {})[browser]
           if data.nil?
             return options
           end
