@@ -11,6 +11,7 @@ require_relative './selenium'
 require_relative '../support/util'
 require_relative '../support/port_scanner'
 require_relative '../support/runner'
+require_relative '../support/identifiers'
 require_relative '../runtime'
 
 module Unobtainium
@@ -43,6 +44,7 @@ module Unobtainium
       class << self
         include ::Unobtainium::Support::Utility
         include ::Unobtainium::Support::PortScanner
+        include ::Unobtainium::Support::Identifiers
 
         ##
         # Ensure that the driver's preconditions are fulfilled.
@@ -71,6 +73,20 @@ module Unobtainium
             options.delete(:phantomjs)
           end
 
+          # If a URL is already provided, we should respect this.
+          if options[:url]
+            require 'uri'
+            parsed = URI.parse(options[:url])
+            from_parsed = {
+              "phantomjs" => {
+                "scheme" => parsed.scheme,
+                "host" => parsed.host,
+                "port" => parsed.port,
+              },
+            }
+            options.merge(from_parsed)
+          end
+
           # Provide defaults for webdriver host and port. We find a free port
           # here, so there's a possibility it'll get used before we run the
           # server in #create. However, for the purpose of resolving options
@@ -78,11 +94,16 @@ module Unobtainium
           # problem.
           defaults = {
             "phantomjs" => {
+              "scheme" => 'http',
               "host" => "localhost",
               "port" => nil,
             },
           }
           options = defaults.merge(options)
+
+          # We want this driver to know and set its own instance ID, so as to
+          # avoid lots of instances talking to lots of different ports.
+          options['unobtainium_instance_id'] = identifier('driver', label, options)
 
           if options['phantomjs']['port'].nil?
             ports = scan(options['phantomjs']['host'], *PORT_RANGES,
@@ -94,7 +115,8 @@ module Unobtainium
           end
 
           # Now override connection options for Selenium
-          options[:url] = "http://#{options['phantomjs']['host']}:"\
+          options[:url] = "#{options['phantomjs']['scheme']}://"\
+              "#{options['phantomjs']['host']}:"\
               "#{options['phantomjs']['port']}"
 
           return label, options
