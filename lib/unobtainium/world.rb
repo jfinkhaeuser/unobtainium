@@ -96,6 +96,7 @@ module Unobtainium
             next
           end
           label = base.gsub(/^\.drivers\./, '')
+          break
         end
 
         # Unfortunately, the "base" key may not be recognized by the drivers,
