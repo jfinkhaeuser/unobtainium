@@ -7,6 +7,8 @@
 # All rights reserved.
 #
 
+require 'collapsium'
+
 require_relative './selenium'
 require_relative '../support/util'
 require_relative '../support/port_scanner'
@@ -25,7 +27,7 @@ module Unobtainium
     class Phantom < Selenium
       # Recognized labels for matching the driver
       LABELS = {
-        phantomjs: [:headless,],
+        phantomjs: [:headless, :phantom],
       }.freeze
 
       # Port scanning ranges (can also be arrays or single port numbers.
@@ -64,60 +66,55 @@ module Unobtainium
         def resolve_options(label, options)
           label, options = super
 
-          if not options[:phantomjs].nil? and not options['phantomjs'].nil?
-            raise ArgumentError, "Use either of 'phantomjs' or :phantomjs as "\
-                "option keys, not both!"
-          end
-          if not options[:phantomjs].nil?
-            options['phantomjs'] = options[:phantomjs]
-            options.delete(:phantomjs)
-          end
+          options = ::Collapsium::UberHash.new(options)
 
           # If a URL is already provided, we should respect this.
           if options[:url]
             require 'uri'
             parsed = URI.parse(options[:url])
             from_parsed = {
-              "phantomjs" => {
-                "scheme" => parsed.scheme,
-                "host" => parsed.host,
-                "port" => parsed.port,
+              phantomjs: {
+                scheme: parsed.scheme,
+                host: parsed.host,
+                port: parsed.port.to_i,
               },
             }
-            options.merge(from_parsed)
+            options.recursive_merge!(from_parsed, false)
           end
 
-          # Provide defaults for webdriver host and port. We find a free port
-          # here, so there's a possibility it'll get used before we run the
-          # server in #create. However, for the purpose of resolving options
-          # that's necessary. So we'll just live with this until it becomes a
-          # problem.
+          # Provide defaults for webdriver host and port.
           defaults = {
-            "phantomjs" => {
-              "scheme" => 'http',
-              "host" => "localhost",
-              "port" => nil,
+            phantomjs: {
+              scheme: 'http',
+              host: "localhost",
+              port: nil,
             },
           }
-          options = defaults.merge(options)
+          options.recursive_merge!(defaults, false)
 
           # We want this driver to know and set its own instance ID, so as to
           # avoid lots of instances talking to lots of different ports.
-          options['unobtainium_instance_id'] = identifier('driver', label, options)
+          if not options['unobtainium_instance_id']
+            options['unobtainium_instance_id'] = identifier('driver', label, options)
+          end
 
-          if options['phantomjs']['port'].nil?
-            ports = scan(options['phantomjs']['host'], *PORT_RANGES,
+          # We find a free port here, so there's a possibility it'll get used
+          # before we run the server in #create. However, for the purpose of
+          # resolving options that's necessary. So we'll just live with this
+          # until it becomes a problem.
+          if options['phantomjs.port'].nil?
+            ports = scan(options['phantomjs.host'], *PORT_RANGES,
                          for: :available, amount: :first)
             if ports.empty?
               raise "Could not find an available port for the PhantomJS server!"
             end
-            options['phantomjs']['port'] = ports[0]
+            options['phantomjs.port'] = ports[0]
           end
 
           # Now override connection options for Selenium
-          options[:url] = "#{options['phantomjs']['scheme']}://"\
-              "#{options['phantomjs']['host']}:"\
-              "#{options['phantomjs']['port']}"
+          options[:url] = "#{options['phantomjs.scheme']}://"\
+              "#{options['phantomjs.host']}:"\
+              "#{options['phantomjs.port']}"
 
           return label, options
         end
@@ -125,6 +122,8 @@ module Unobtainium
         ##
         # Create and return a driver instance
         def create(_, options)
+          # :nocov:
+
           # Extract PhantomJS options
           host = options['phantomjs']['host']
           port = options['phantomjs']['port']
@@ -160,6 +159,8 @@ module Unobtainium
           # Run Selenium against server
           driver = ::Selenium::WebDriver.for(:remote, opts)
           return driver
+
+          # :nocov:
         end
       end # class << self
     end # class PhantomJS
