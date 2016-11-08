@@ -35,4 +35,34 @@ describe ::Unobtainium::World do
     expect(@tester.config["drivers.leaf.base"]).to eql %w(.drivers.mock)
     expect(@tester.driver.passed_options["base"]).to be_nil
   end
+
+  context "object identity" do
+    context "#driver" do
+      it "returns the same object for the same config" do
+        first = @tester.driver.object_id
+        second = @tester.driver.object_id
+        expect(first).to eql second
+      end
+
+      it "returns a different object for different config" do
+        first = @tester.driver(:mock, { foo: true }).object_id
+        second = @tester.driver(:mock, { foo: false }).object_id
+        expect(first).not_to eql second
+      end
+    end
+
+    context "driver.impl" do
+      it "returns the same object for the same config" do
+        first = @tester.driver.impl.object_id
+        second = @tester.driver.impl.object_id
+        expect(first).to eql second
+      end
+
+      it "returns a different object for different config" do
+        first = @tester.driver(:mock, { foo: true }).impl.object_id
+        second = @tester.driver(:mock, { foo: false }).impl.object_id
+        expect(first).not_to eql second
+      end
+    end
+  end
 end
