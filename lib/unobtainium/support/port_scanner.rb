@@ -30,6 +30,12 @@ module Unobtainium
     # A port scanner for finding a free port for running e.g. a selenium
     # or appium server.
     module PortScanner
+      # Retry a port this many times before failing
+      MAX_RETRIES = 5
+
+      # Delay each retry by this many seconds before trying again
+      RETRY_DELAY = 0.5
+
       ##
       # Returns true if the port is open on the host, false otherwise.
       # @param host [String] host name or IP address
@@ -175,14 +181,20 @@ module Unobtainium
         sock = Socket.new(domain, :STREAM)
 
         connected = false
+        tries = MAX_RETRIES
         loop do
           begin
             sock.connect_nonblock(addr)
           rescue Errno::EINPROGRESS
-            if not IO.select(nil, [sock], nil, 1)
-              # Timed out, retry?
-              next
+            tries -= 1
+            if tries <= 0
+              # That's it, we've got enough.
+              break
             end
+
+            # The result of select doesn't matter. What matters is that we wait
+            # for sock to become usable, or for the timeout to occur.
+            IO.select([sock], [sock], nil, RETRY_DELAY)
           rescue Errno::EISCONN
             connected = true
             break

@@ -47,6 +47,27 @@ describe ::Unobtainium::Support::PortScanner do
         tester.port_open?('localhost', 1234, :FOO)
       end.to raise_error(ArgumentError)
     end
+
+    it "handles unsupported protocols gracefully" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
+          Errno::EINVAL # or EAFNOSUPPORT
+      )
+      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+    end
+
+    it "retries for several seconds if a socket is being created" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
+          Errno::EINPROGRESS
+      )
+      before = Time.now.utc
+      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+      after = Time.now.utc
+
+      elapsed = after - before
+      expected_max_time = ::Unobtainium::Support::PortScanner::MAX_RETRIES \
+                          * ::Unobtainium::Support::PortScanner::RETRY_DELAY
+      expect(elapsed).to be <= expected_max_time
+    end
   end
 
   describe "scan" do
@@ -113,12 +134,36 @@ describe ::Unobtainium::Support::PortScanner do
       expect(tester.scan('localhost', 1230..4330, amount: :first)).to eql [1234]
     end
 
+    it "can return successfully after the first find" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
+        connect_mock(sock, addr)
+      end
+
+      expect(tester.scan('localhost', 1230..4330, amount: :first)).to eql [1234]
+    end
+
     it "can scan for closed/available ports" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
         connect_mock(sock, addr)
       end
 
       expect(tester.scan('localhost', 1233..1234, for: :closed)).to eql [1233]
+    end
+
+    it "can scan for the first closed/available port" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
+        connect_mock(sock, addr)
+      end
+
+      expect(tester.scan('localhost', 1232..1234, amount: :first, for: :closed)).to eql [1232]
+    end
+
+    it "can scan for the first string port" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock) do |sock, addr|
+        connect_mock(sock, addr)
+      end
+
+      expect(tester.scan('localhost', '1234', amount: :first)).to eql [1234]
     end
 
     it "rejects bad amounts" do
