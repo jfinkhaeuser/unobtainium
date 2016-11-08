@@ -32,7 +32,7 @@ describe ::Unobtainium::World do
   end
 
   it "extends driver options, but doesn't pass 'base' on" do
-    expect(@tester.config["drivers.leaf.base"]).to eql "mock"
+    expect(@tester.config["drivers.leaf.base"]).to eql %w(.drivers.mock)
     expect(@tester.driver.passed_options["base"]).to be_nil
   end
 end

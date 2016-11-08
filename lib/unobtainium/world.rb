@@ -82,7 +82,18 @@ module Unobtainium
       # The merged/extended options might define a "base"; that's the label
       # we need to use.
       if not options.nil? and not options["base"].nil?
-        label = options["base"]
+        bases = options["base"]
+
+        # Collapsium config returns an Array of bases, but we really only want
+        # one. We'll have to do the sensible thing and only use one of the bases
+        # which also is a driver for the label. Since there's no better choice,
+        # let's default to the first of those.
+        bases.each do |base|
+          if not base.start_with?(".drivers.")
+            next
+          end
+          label = base.gsub(/^\.drivers\./, '')
+        end
 
         # Unfortunately, the "base" key may not be recognized by the drivers,
         # which could lead to errors down the road. Let's remove it; it's reserved
