@@ -35,6 +35,7 @@ end # module FakeModule
 describe ::Unobtainium::Driver do
   before :each do
     ::Unobtainium::Driver.register_implementation(MockDriver, "mock_driver.rb")
+    ::Unobtainium::Driver.register_implementation(OptionResolvingMockDriver, "mock_driver.rb")
   end
 
   describe "driver registration" do
@@ -100,6 +101,32 @@ describe ::Unobtainium::Driver do
     it "passes options through correctly" do
       drv = ::Unobtainium::Driver.create(:mock, foo: 42)
       expect(drv.passed_options).to eql foo: 42
+    end
+
+    context "option resolution" do
+      it "provides defaults" do
+        drv = ::Unobtainium::Driver.create(:option_resolving)
+        expect(drv.options).to include(:foo)
+        expect(drv.options[:foo]).to eql 42
+      end
+
+      it "overrides when appropriate" do
+        drv = ::Unobtainium::Driver.create(:option_resolving, foo: 123)
+        expect(drv.options).to include(:foo)
+        expect(drv.options[:foo]).to eql 42
+      end
+
+      it "does not override always" do
+        drv = ::Unobtainium::Driver.create(:option_resolving, foo: 456)
+        expect(drv.options).to include(:foo)
+        expect(drv.options[:foo]).to eql 456
+      end
+
+      it "sets an instance ID" do
+        drv = ::Unobtainium::Driver.create(:option_resolving)
+        expect(drv.options).to include('unobtainium_instance_id')
+        expect(drv.options['unobtainium_instance_id']).to eql 'FIXED'
+      end
     end
   end
 

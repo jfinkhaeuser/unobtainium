@@ -24,4 +24,27 @@ class MockDriver
     end
   end
 end # class MockDriver
+
+class OptionResolvingMockDriver < MockDriver
+  class << self
+    def matches?(label)
+      label == :option_resolving
+    end
+
+    def resolve_options(label, options)
+      if options
+        opts = options.dup
+      end
+      opts ||= {}
+
+      if opts[:foo] == 123 or opts[:foo] == nil
+        opts[:foo] = 42
+      end
+
+      opts["unobtainium_instance_id"] = 'FIXED'
+
+      return label, opts
+    end
+  end
+end # class OptionResolvingMockDriver
 # rubocop:enable Style/GuardClause
