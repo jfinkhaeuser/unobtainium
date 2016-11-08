@@ -97,7 +97,7 @@ describe ::Unobtainium::Drivers::Selenium do
         opts = {
           'caps' => caps1,
           caps: caps2,
-          desired_capabilites: caps3,
+          desired_capabilities: caps3,
         }
         _, resolved = tester.resolve_options(:chrome, opts)
 
