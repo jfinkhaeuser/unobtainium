@@ -243,7 +243,12 @@ module Unobtainium
       driver_klass.ensure_preconditions(@label, @options)
 
       # Great, instanciate!
-      @impl = driver_klass.create(@label, @options)
+      opts = nil
+      if not @options.nil?
+        opts = @options.dup
+        opts.delete('unobtainium_instance_id')
+      end
+      @impl = driver_klass.create(@label, opts)
 
       # Now also extend this implementation with all the modues that match
       @@modules.each do |klass, _|
