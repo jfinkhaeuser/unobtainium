@@ -12,7 +12,7 @@ class Tester
 end # class Tester
 
 describe ::Unobtainium::Support::Utility do
-  it "returns nil for a lable that can't be matched" do
+  it "returns nil for a label that can't be matched" do
     expect(Tester.normalize_label("nomatch")).to be_nil
     expect(Tester.normalize_label(:nomatch)).to be_nil
   end
