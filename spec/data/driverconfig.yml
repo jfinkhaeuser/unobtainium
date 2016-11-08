@@ -7,6 +7,11 @@
 #
 # so the order in this file has to be mock -> branch2 -> branch1 -> leaf
 ---
+global:
+  global_opt: 'set'
+
+driver: leaf
+
 drivers:
   mock:
     mockoption: 42
@@ -16,11 +21,13 @@ drivers:
   branch1:
     extends: mock
     branch1option: foo
+  branch3:
+    extends: .global
+    branch3option: baz
   leaf:
-    extends: branch2
+    extends: .global, branch2
     leafoption: baz
     branch1option: override
   base_does_not_exist:
     extends: nonexistent_base
     some: value
-driver: leaf
