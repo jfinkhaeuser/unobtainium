@@ -155,7 +155,11 @@ describe ::Unobtainium::Support::PortScanner do
         connect_mock(sock, addr)
       end
 
-      expect(tester.scan('localhost', 1232..1234, amount: :first, for: :closed)).to eql [1232]
+      opts = {
+        amount: :first,
+        for: :closed,
+      }
+      expect(tester.scan('localhost', 1232..1234, opts)).to eql [1232]
     end
 
     it "can scan for the first string port" do

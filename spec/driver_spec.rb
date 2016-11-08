@@ -34,8 +34,10 @@ end # module FakeModule
 
 describe ::Unobtainium::Driver do
   before :each do
-    ::Unobtainium::Driver.register_implementation(MockDriver, "mock_driver.rb")
-    ::Unobtainium::Driver.register_implementation(OptionResolvingMockDriver, "mock_driver.rb")
+    ::Unobtainium::Driver.register_implementation(MockDriver,
+                                                  "mock_driver.rb")
+    ::Unobtainium::Driver.register_implementation(OptionResolvingMockDriver,
+                                                  "mock_driver.rb")
   end
 
   describe "driver registration" do

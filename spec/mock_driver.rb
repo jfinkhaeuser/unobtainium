@@ -37,7 +37,7 @@ class OptionResolvingMockDriver < MockDriver
       end
       opts ||= {}
 
-      if opts[:foo] == 123 or opts[:foo] == nil
+      if opts[:foo] == 123 or opts[:foo].nil?
         opts[:foo] = 42
       end
 

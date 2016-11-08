@@ -20,7 +20,8 @@ describe ::Unobtainium::World do
   end
 
   it "has set the config file as expected" do
-    expect(::Unobtainium::World.config_file).to end_with File.join('data', 'driverconfig.yml')
+    expect(::Unobtainium::World.config_file).to end_with \
+      File.join('data', 'driverconfig.yml')
   end
 
   it "loads the global config" do
@@ -36,8 +37,10 @@ describe ::Unobtainium::World do
   end
 
   it "extends driver options, but doesn't pass 'base' on" do
-    expect(@tester.config["drivers.leaf.base"]).to eql %w(.global .drivers.mock
-                                                          .drivers.branch1 .drivers.branch2)
+    expect(@tester.config["drivers.leaf.base"]).to eql %w(.global
+                                                          .drivers.mock
+                                                          .drivers.branch1
+                                                          .drivers.branch2)
     expect(@tester.driver.passed_options["base"]).to be_nil
   end
 
@@ -50,8 +53,8 @@ describe ::Unobtainium::World do
       end
 
       it "returns a different object for different config" do
-        first = @tester.driver(:mock, { foo: true }).object_id
-        second = @tester.driver(:mock, { foo: false }).object_id
+        first = @tester.driver(:mock, foo: true).object_id
+        second = @tester.driver(:mock, foo: false).object_id
         expect(first).not_to eql second
       end
     end
@@ -64,8 +67,8 @@ describe ::Unobtainium::World do
       end
 
       it "returns a different object for different config" do
-        first = @tester.driver(:mock, { foo: true }).impl.object_id
-        second = @tester.driver(:mock, { foo: false }).impl.object_id
+        first = @tester.driver(:mock, foo: true).impl.object_id
+        second = @tester.driver(:mock, foo: false).impl.object_id
         expect(first).not_to eql second
       end
     end

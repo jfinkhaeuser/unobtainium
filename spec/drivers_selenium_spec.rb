@@ -6,8 +6,10 @@ describe ::Unobtainium::Drivers::Selenium do
 
   context "#matches?" do
     it "matches all known aliases" do
-      aliases = [:firefox, :ff, :internet_explorer, :internetexplorer, :explorer,
-      :ie, :safari, :chrome, :chromium]
+      aliases = [
+        :firefox, :ff, :internet_explorer, :internetexplorer, :explorer,
+        :ie, :safari, :chrome, :chromium
+      ]
       aliases.each do |name|
         expect(tester.matches?(name)).to be_truthy
       end
@@ -68,7 +70,11 @@ describe ::Unobtainium::Drivers::Selenium do
       end
 
       it "merges :desired_capabilites with :caps" do
-        _, resolved = tester.resolve_options(:chrome, caps: caps1, desired_capabilities: caps2)
+        opts = {
+          caps: caps1,
+          desired_capabilities: caps2,
+        }
+        _, resolved = tester.resolve_options(:chrome, opts)
 
         expect(resolved[:desired_capabilities]).not_to be_nil
         expect(resolved[:desired_capabilities][:foo]).to eql 123
@@ -76,7 +82,11 @@ describe ::Unobtainium::Drivers::Selenium do
       end
 
       it "merges :desired_capabilites with 'caps'" do
-        _, resolved = tester.resolve_options(:chrome, 'caps' => caps1, desired_capabilities: caps2)
+        opts = {
+          'caps' => caps1,
+          desired_capabilities: caps2,
+        }
+        _, resolved = tester.resolve_options(:chrome, opts)
 
         expect(resolved[:desired_capabilities]).not_to be_nil
         expect(resolved[:desired_capabilities][:foo]).to eql 123
@@ -84,7 +94,12 @@ describe ::Unobtainium::Drivers::Selenium do
       end
 
       it "merges :desired_capabilites with :caps and 'caps'" do
-        _, resolved = tester.resolve_options(:chrome, 'caps' => caps1, caps: caps2, desired_capabilities: caps3)
+        opts = {
+          'caps' => caps1,
+          caps: caps2,
+          desired_capabilites: caps3,
+        }
+        _, resolved = tester.resolve_options(:chrome, opts)
 
         expect(resolved[:desired_capabilities]).not_to be_nil
         expect(resolved[:desired_capabilities][:foo]).to eql 'bar'
@@ -101,7 +116,8 @@ describe ::Unobtainium::Drivers::Selenium do
 
         label, resolved = tester.resolve_options(:chromium, nil)
 
-        expect(resolved[:desired_capabilities]["chromeOptions"]["binary"]).to eql '/path/to/binary'
+        expect(resolved[:desired_capabilities]["chromeOptions"]["binary"]).to \
+          eql '/path/to/binary'
         expect(label).to eql :chrome
       end
 
@@ -130,7 +146,8 @@ describe ::Unobtainium::Drivers::Selenium do
         }
         label, resolved = tester.resolve_options(:chromium, opts)
 
-        expect(resolved[:desired_capabilities]["chromeOptions"]["binary"]).to eql 'test'
+        expect(resolved[:desired_capabilities]["chromeOptions"]["binary"]).to \
+          eql 'test'
         expect(label).to eql :chrome
       end
     end

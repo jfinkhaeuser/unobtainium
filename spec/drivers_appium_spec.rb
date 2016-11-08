@@ -1,7 +1,6 @@
 require 'spec_helper'
 require_relative '../lib/unobtainium/drivers/appium'
 
-
 class SeleniumMock
   def test
     return "selenium"
@@ -31,7 +30,7 @@ describe ::Unobtainium::Drivers::Appium do
 
   context "#matches?" do
     it "matches all known aliases" do
-      aliases = [:ios, :iphone, :ipad, :android ]
+      aliases = [:ios, :iphone, :ipad, :android]
       aliases.each do |name|
         expect(tester.matches?(name)).to be_truthy
       end
@@ -126,7 +125,11 @@ describe ::Unobtainium::Drivers::Appium do
       end
 
       it "merges :caps with :desired_capabilities" do
-        _, resolved = tester.resolve_options(:ios, desired_capabilities: caps1, caps: caps2)
+        opts = {
+          desired_capabilities: caps1,
+          caps: caps2
+        }
+        _, resolved = tester.resolve_options(:ios, opts)
 
         expect(resolved[:caps]).not_to be_nil
         expect(resolved[:caps][:foo]).to eql 123
@@ -134,7 +137,11 @@ describe ::Unobtainium::Drivers::Appium do
       end
 
       it "merges :caps with 'desired_capabilities'" do
-        _, resolved = tester.resolve_options(:ios, 'desired_capabilities' => caps1, caps: caps2)
+        opts = {
+          'desired_capabilities' => caps1,
+          caps: caps2,
+        }
+        _, resolved = tester.resolve_options(:ios, opts)
 
         expect(resolved[:caps]).not_to be_nil
         expect(resolved[:caps][:foo]).to eql 123
@@ -142,7 +149,12 @@ describe ::Unobtainium::Drivers::Appium do
       end
 
       it "merges :caps with :desired_capabilities and 'desired_capabilities'" do
-        _, resolved = tester.resolve_options(:ios, 'desired_capabilities' => caps1, desired_capabilites: caps2, caps: caps3)
+        opts = {
+          'desired_capabilities' => caps1,
+          desired_capabilites: caps2,
+          caps: caps3,
+        }
+        _, resolved = tester.resolve_options(:ios, opts)
 
         expect(resolved[:caps]).not_to be_nil
         expect(resolved[:caps][:foo]).to eql 'bar'
@@ -210,7 +222,8 @@ describe ::Unobtainium::Drivers::Appium do
             browserName: 'Something Else',
           }
         }
-        expect { tester.resolve_options(:android, opts) }.to raise_error(ArgumentError)
+        expect { tester.resolve_options(:android, opts) }.to \
+          raise_error(ArgumentError)
       end
 
       it "silently ignores identical options" do
@@ -222,7 +235,8 @@ describe ::Unobtainium::Drivers::Appium do
           }
         }
         resolved = nil
-        expect { _, resolved = tester.resolve_options(:android, opts) }.not_to raise_error
+        expect { _, resolved = tester.resolve_options(:android, opts) }.not_to \
+          raise_error
         expect(resolved['caps.browserName']).to eql 'Chrome'
       end
     end

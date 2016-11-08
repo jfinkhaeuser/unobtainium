@@ -1,7 +1,6 @@
 require 'spec_helper'
 require_relative '../lib/unobtainium/drivers/phantom'
 
-
 class SeleniumMock
   def test
     return "selenium"
@@ -51,7 +50,7 @@ describe ::Unobtainium::Drivers::Phantom do
     end
 
     it "would fail if requirements were not met" do
-      allow_any_instance_of(Object).to receive(:require) do |context, name|
+      allow_any_instance_of(Object).to receive(:require) do |_, name|
         if name == 'phantomjs'
           raise LoadError
         end
@@ -74,11 +73,12 @@ describe ::Unobtainium::Drivers::Phantom do
       it "prefers the string if both :phantomjs and 'phantomjs' are given" do
         opts = {
           phantomjs: { scheme: 123 },
-          'phantomjs' => { scheme: 42},
+          'phantomjs' => { scheme: 42 },
         }
 
         resolved = nil
-        expect { _, resolved = tester.resolve_options(:phantomjs, opts) }.not_to raise_error
+        expect { _, resolved = tester.resolve_options(:phantomjs, opts) }.not_to \
+          raise_error
         expect(resolved['phantomjs.scheme']).to eql 42
       end
 
@@ -112,7 +112,7 @@ describe ::Unobtainium::Drivers::Phantom do
       end
 
       it "defaults to 'http' and 'localhost' and a free port" do
-        allow(tester).to receive(:scan) { |*args| [9134] }
+        allow(tester).to receive(:scan) { |*_| [9134] }
         _, resolved = tester.resolve_options(:phantomjs, nil)
         expect(resolved[:phantomjs]).not_to be_nil
         expect(resolved['phantomjs.scheme']).to eql 'http'
@@ -122,8 +122,9 @@ describe ::Unobtainium::Drivers::Phantom do
       end
 
       it "raises an error when no free port could be found" do
-        allow(tester).to receive(:scan) { |*args| [] }
-        expect { tester.resolve_options(:phantomjs, nil) }.to raise_error(RuntimeError)
+        allow(tester).to receive(:scan) { |*_| [] }
+        expect { tester.resolve_options(:phantomjs, nil) }.to \
+          raise_error(RuntimeError)
       end
     end
   end

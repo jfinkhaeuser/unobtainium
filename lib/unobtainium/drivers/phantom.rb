@@ -69,33 +69,16 @@ module Unobtainium
           options = ::Collapsium::UberHash.new(options)
 
           # If a URL is already provided, we should respect this.
-          if options[:url]
-            require 'uri'
-            parsed = URI.parse(options[:url])
-            from_parsed = {
-              phantomjs: {
-                scheme: parsed.scheme,
-                host: parsed.host,
-                port: parsed.port.to_i,
-              },
-            }
-            options.recursive_merge!(from_parsed, false)
-          end
+          merge_url(options)
 
           # Provide defaults for webdriver host and port.
-          defaults = {
-            phantomjs: {
-              scheme: 'http',
-              host: "localhost",
-              port: nil,
-            },
-          }
-          options.recursive_merge!(defaults, false)
+          merge_defaults(options)
 
           # We want this driver to know and set its own instance ID, so as to
           # avoid lots of instances talking to lots of different ports.
           if not options['unobtainium_instance_id']
-            options['unobtainium_instance_id'] = identifier('driver', label, options)
+            options['unobtainium_instance_id'] = identifier('driver', label,
+                                                            options)
           end
 
           # We find a free port here, so there's a possibility it'll get used
@@ -161,6 +144,36 @@ module Unobtainium
           return driver
 
           # :nocov:
+        end
+
+        private
+
+        def merge_url(options)
+          if not options[:url]
+            return
+          end
+
+          require 'uri'
+          parsed = URI.parse(options[:url])
+          from_parsed = {
+            phantomjs: {
+              scheme: parsed.scheme,
+              host: parsed.host,
+              port: parsed.port.to_i,
+            },
+          }
+          options.recursive_merge!(from_parsed, false)
+        end
+
+        def merge_defaults(options)
+          defaults = {
+            phantomjs: {
+              scheme: 'http',
+              host: "localhost",
+              port: nil,
+            },
+          }
+          options.recursive_merge!(defaults, false)
         end
       end # class << self
     end # class PhantomJS
