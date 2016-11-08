@@ -13,6 +13,7 @@ require 'unobtainium/version'
 
 # rubocop:disable Style/UnneededPercentQ, Style/ExtraSpacing
 # rubocop:disable Style/SpaceAroundOperators
+# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name          = "unobtainium"
   spec.version       = Unobtainium::VERSION
@@ -59,5 +60,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "collapsium", "~> 0.6"
   spec.add_dependency "collapsium-config", "~> 0.4"
 end
+# rubocop:enable Metrics/BlockLength
 # rubocop:enable Style/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
