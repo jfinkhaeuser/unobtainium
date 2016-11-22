@@ -57,7 +57,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sys-proctable", "~> 1.1"
   spec.add_dependency "ptools", "~> 1.3"
-  spec.add_dependency "collapsium", "~> 0.7"
+  spec.add_dependency "collapsium", "~> 0.8"
   spec.add_dependency "collapsium-config", "~> 0.4"
 end
 # rubocop:enable Metrics/BlockLength
