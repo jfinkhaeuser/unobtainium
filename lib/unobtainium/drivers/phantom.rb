@@ -108,8 +108,8 @@ module Unobtainium
           # :nocov:
 
           # Extract PhantomJS options
-          host = options['phantomjs']['host']
-          port = options['phantomjs']['port']
+          host = options['phantomjs.host']
+          port = options['phantomjs.port']
           opts = options.dup
           opts.delete('phantomjs')
 
@@ -169,7 +169,7 @@ module Unobtainium
           defaults = {
             phantomjs: {
               scheme: 'http',
-              host: "localhost",
+              host: 'localhost',
               port: nil,
             },
           }
