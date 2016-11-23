@@ -112,7 +112,7 @@ module Unobtainium
 
       # Create a key for the label and options. This should always
       # return the same key for the same label and options.
-      key = options['unobtainum_instance_id']
+      key = options['unobtainium_instance_id']
       if key.nil?
         key = identifier('driver', label, options)
       end
