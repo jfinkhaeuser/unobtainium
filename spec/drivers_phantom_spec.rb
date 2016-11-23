@@ -137,6 +137,16 @@ describe ::Unobtainium::Drivers::Phantom do
         expect(resolved['unobtainium_instance_id']).not_to be_nil
       end
 
+      context "defaults" do
+        it "generates the same ID and port if no input is given" do
+          _, resolved1 = tester.resolve_options(:phantomjs, nil)
+          expect(resolved1['phantomjs.generated_port']).to eql 9134
+
+          _, resolved2 = tester.resolve_options(:phantomjs, nil)
+          expect(resolved2['phantomjs.generated_port']).to eql 9134
+        end
+      end
+
       it "generates new IDs for new options" do
         opts = ::Collapsium::UberHash.new(
           phantomjs: {
