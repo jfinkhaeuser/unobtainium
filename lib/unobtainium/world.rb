@@ -128,8 +128,16 @@ module Unobtainium
           return
         end
 
-        meth = at_end.to_sym
-        the_driver.send(meth)
+        # We'll rescue Exception here because we really want all destructors
+        # to run.
+        # rubocop:disable Lint/RescueException
+        begin
+          meth = at_end.to_sym
+          the_driver.send(meth)
+        rescue Exception => err
+          puts "Exception in destructor: #{err}"
+        end
+        # rubocop:enable Lint/RescueException
         # :nocov:
       end
       return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
