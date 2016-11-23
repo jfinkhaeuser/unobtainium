@@ -15,7 +15,6 @@ def store_ids(the_driver = driver)
   @driver_impl_ids << the_driver.impl.object_id
 end
 
-
 Given(/^I have no driver IDs stored$/) do
   @driver_ids = []
   @driver_impl_ids = []
@@ -40,7 +39,9 @@ Then(/^I expect the driver in each case to be the same$/) do
   end
 end
 
-When(/^I navigate to the best website in the world with another driver instance$/) do
+When(
+    /^I navigate to the best website in the world with another driver instance$/
+) do
   new_driver = driver(:headless, desired_capabilities: { something: :new })
   new_driver.navigate.to "http://finkhaeuser.de"
   store_ids(new_driver)
