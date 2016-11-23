@@ -72,6 +72,52 @@ module Unobtainium
     # Returns a driver instance with the given options. If no options are
     # provided, options from the global configuration are used.
     def driver(label = nil, options = nil)
+      # Resolve unique options
+      label, options = resolve_options(label, options)
+
+      # Create a key for the label and options. This should always
+      # return the same key for the same label and options.
+      key = options['unobtainium_instance_id']
+      if key.nil?
+        key = identifier('driver', label, options)
+      end
+
+      # Only create a driver with this exact configuration once. Unfortunately
+      # We'll have to bind the destructor to whatever configuration exists at
+      # this point in time, so we have to create a proc here - whether the Driver
+      # gets created or not.
+      at_end = config.fetch("at_end", "quit")
+      dtor = proc do |the_driver|
+        # :nocov:
+        if the_driver.nil?
+          return
+        end
+
+        # We'll rescue Exception here because we really want all destructors
+        # to run.
+        # rubocop:disable Lint/RescueException
+        begin
+          meth = at_end.to_sym
+          the_driver.send(meth)
+        rescue Exception => err
+          puts "Exception in destructor: [#{err.class}] #{err}"
+        end
+        # rubocop:enable Lint/RescueException
+        # :nocov:
+      end
+      return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
+        ::Unobtainium::Driver.create(label, options)
+      end
+    end
+
+    private
+
+    ##
+    # World's own option resolution ensures that the same options always get
+    # resolved the same, by storing anything resolved from Driver in the Runtime
+    # instance (i.e. asking the Driver only once per unique set of label and
+    # options).
+    def resolve_options(label, options)
       # Make sure we have a label for the driver
       if label.nil?
         label = config["driver"]
@@ -106,43 +152,21 @@ module Unobtainium
         options.delete("base")
       end
 
+      # Do we have options already resolved?
+      option_key = identifier('options', label, options)
+      begin
+        stored_opts = ::Unobtainium::Runtime.instance.fetch(option_key)
+        options = ::Collapsium::UberHash.new(options)
+        options.recursive_merge!(stored_opts)
+      rescue KeyError
+        label, options, _ = ::Unobtainium::Driver.resolve_options(label, options)
+      end
+
       # The driver may modify the options; if so, we should let it do that
       # here. That way our key (below) is based on the expanded options.
-      label, options, _ = ::Unobtainium::Driver.resolve_options(label, options)
+      ::Unobtainium::Runtime.instance.store(option_key, options)
 
-      # Create a key for the label and options. This should always
-      # return the same key for the same label and options.
-      key = options['unobtainium_instance_id']
-      if key.nil?
-        key = identifier('driver', label, options)
-      end
-
-      # Only create a driver with this exact configuration once. Unfortunately
-      # We'll have to bind the destructor to whatever configuration exists at
-      # this point in time, so we have to create a proc here - whether the Driver
-      # gets created or not.
-      at_end = config.fetch("at_end", "quit")
-      dtor = proc do |the_driver|
-        # :nocov:
-        if the_driver.nil?
-          return
-        end
-
-        # We'll rescue Exception here because we really want all destructors
-        # to run.
-        # rubocop:disable Lint/RescueException
-        begin
-          meth = at_end.to_sym
-          the_driver.send(meth)
-        rescue Exception => err
-          puts "Exception in destructor: #{err}"
-        end
-        # rubocop:enable Lint/RescueException
-        # :nocov:
-      end
-      return ::Unobtainium::Runtime.instance.store_with_if(key, dtor) do
-        ::Unobtainium::Driver.create(label, options)
-      end
+      return label, options
     end
   end # module World
 end # module Unobtainium
