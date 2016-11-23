@@ -74,30 +74,48 @@ module Unobtainium
           # Provide defaults for webdriver host and port.
           merge_defaults(options)
 
-          # We want this driver to know and set its own instance ID, so as to
-          # avoid lots of instances talking to lots of different ports.
-          if not options['unobtainium_instance_id']
-            options['unobtainium_instance_id'] = identifier('driver', label,
-                                                            options)
-          end
+          # At this point, the :phantomjs field is canonical in that it will
+          # be used to generate a :port and :url if necessary. That means we
+          # can use it to create a stable ID, too.
+          # This also implies that the :url field is pointless and should not
+          # be part of the ID; it will be generated again later on.
+          options.delete(:url)
+
+          # We need to figure out what we have to do based on detecting whether
+          # a port or some other option changed (or nothing did!)
+          fix_ports(label, options)
 
           # We find a free port here, so there's a possibility it'll get used
           # before we run the server in #create. However, for the purpose of
           # resolving options that's necessary. So we'll just live with this
           # until it becomes a problem.
-          if options['phantomjs.port'].nil?
-            ports = scan(options['phantomjs.host'], *PORT_RANGES,
-                         for: :available, amount: :first)
-            if ports.empty?
-              raise "Could not find an available port for the PhantomJS server!"
+          if options['phantomjs.generated_port'].nil?
+            if options['phantomjs.port'].nil?
+              ports = scan(options['phantomjs.host'], *PORT_RANGES,
+                           for: :available, amount: :first)
+              if ports.empty?
+                raise "Could not find an available port for the PhantomJS server!"
+              end
+              options['phantomjs.generated_port'] = ports[0]
+            else
+              options['phantomjs.generated_port'] = options['phantomjs.port']
             end
-            options['phantomjs.port'] = ports[0]
           end
 
-          # Now override connection options for Selenium
+          # Now we can't just use new_id because we might have found a new
+          # port in the meantime. We'll have to generate yet another ID, and
+          # use that.
+          # Now before calculating this new ID, we'll run the options through
+          # the super method again. This is to ensure that all keys have the
+          # expected class *before* we perform this calculation.
+          new_id = identifier('driver', label, options)
+          options['unobtainium_instance_id'] = new_id
+
+          # Now we can generate the :url field for Selenium's benefit; it's
+          # just a copy of the canonical options.
           options[:url] = "#{options['phantomjs.scheme']}://"\
               "#{options['phantomjs.host']}:"\
-              "#{options['phantomjs.port']}"
+              "#{options['phantomjs.generated_port']}"
 
           return label, options
         end
@@ -109,7 +127,7 @@ module Unobtainium
 
           # Extract PhantomJS options
           host = options['phantomjs.host']
-          port = options['phantomjs.port']
+          port = options['phantomjs.port'] || options['phantomjs.generated_port']
           opts = options.dup
           opts.delete('phantomjs')
 
@@ -155,13 +173,24 @@ module Unobtainium
 
           require 'uri'
           parsed = URI.parse(options[:url])
+          parsed_port = parsed.port.to_i
           from_parsed = {
             phantomjs: {
               scheme: parsed.scheme,
               host: parsed.host,
-              port: parsed.port.to_i,
+              port: nil,
             },
           }
+
+          # Very special case: if the parsed port matches the generated port,
+          # and the port is nil, we want to keep it that way for deduplication
+          # purposes. See `#fix_ports` for how this interacts.
+          port = options['phantomjs.port']
+          generated_port = options['phantomjs.generated_port']
+          if not (parsed_port == generated_port and port.nil?)
+            from_parsed[:phantomjs][:port] = parsed_port
+          end
+
           options.recursive_merge!(from_parsed, false)
         end
 
@@ -171,9 +200,60 @@ module Unobtainium
               scheme: 'http',
               host: 'localhost',
               port: nil,
+              generated_port: nil,
             },
           }
           options.recursive_merge!(defaults, false)
+        end
+
+        def fix_ports(label, options)
+          # Let's keep the old ID around and generate a new one, largely as
+          # a checksum of the options.
+          old_id = options.delete('unobtainium_instance_id')
+          new_id = identifier('driver', label, options)
+
+          # If the IDs don't match, it means some options changed. This may be
+          # the port or another option:
+          # #1 If IDs are the same and port is the same as generated port, we
+          #    need not do anything.
+          # #2 If IDs are the same and the ports differ, we have reached an
+          #    undefined state. This should be impossible.
+          # #3 If IDs differ and the ports are the same, some other option was
+          #    changed. We need to generate a new port and new ID (and warn about
+          #    this).
+          # #4 If IDs differ and ports differ, a new port was set. We need to
+          #    proceed with the new port and generate a new ID.
+          port = options['phantomjs.port']
+          generated_port = options['phantomjs.generated_port']
+
+          if old_id == new_id and port == generated_port
+            # #1 above, nothing to do.
+          elsif old_id == new_id and port != generated_port
+            # :nocov:
+            # #2 above, raise hell
+            if not port.nil?
+              raise "This can't happen; the instance ID (checksum) is the same, "\
+                "but the input differed: #{port} <-> #{generated_port}"
+            end
+            # :nocov:
+          elsif old_id != new_id and port == generated_port
+            # #3 above; nuke the ports and warn.
+            if not port.nil? and not generated_port.nil?
+              warn "Rejecting port #{port} and generating new port because "\
+                "options changed."
+            end
+            options['phantomjs.port'] = nil
+            options['phantomjs.generated_port'] = nil
+          elsif old_id != new_id and port != generated_port
+            # #4 above
+            options['phantomjs.generated_port'] = nil
+          else
+            # :nocov:
+            # Unreachable
+            raise "This can't happen; we have four cases and handle each of "\
+              "them. This line is unreachable. Please check the logic."
+            # :nocov:
+          end
         end
       end # class << self
     end # class PhantomJS

@@ -117,7 +117,8 @@ describe ::Unobtainium::Drivers::Phantom do
         expect(resolved[:phantomjs]).not_to be_nil
         expect(resolved['phantomjs.scheme']).to eql 'http'
         expect(resolved['phantomjs.host']).to eql 'localhost'
-        expect(resolved['phantomjs.port']).to eql 9134
+        expect(resolved['phantomjs.port']).to be_nil
+        expect(resolved['phantomjs.generated_port']).to eql 9134
         expect(resolved['url']).to eql 'http://localhost:9134'
       end
 
@@ -128,7 +129,7 @@ describe ::Unobtainium::Drivers::Phantom do
       end
     end
 
-    context "driver ID" do
+    context "driver ID and port" do
       it "sets a driver ID" do
         allow(tester).to receive(:scan) { |*_| [9134] }
         _, resolved = tester.resolve_options(:phantomjs, nil)
@@ -136,24 +137,33 @@ describe ::Unobtainium::Drivers::Phantom do
         expect(resolved['unobtainium_instance_id']).not_to be_nil
       end
 
-      it "changes IDs when options change" do
-        opts = {
+      it "generates new IDs for new options" do
+        opts = ::Collapsium::UberHash.new(
           phantomjs: {
             scheme: 'noodle',
             port: 1234,
-          },
-        }
+          }
+        )
         _, resolved1 = tester.resolve_options(:phantomjs, opts)
+        expect(resolved1['phantomjs.port']).to eql 1234
 
-        opts = opts.dup
+        opts = opts.deep_dup
         opts[:phantomjs][:port] = 8888
         _, resolved2 = tester.resolve_options(:phantomjs, opts)
 
+        # resolved1 must remain untouched by the change
+        expect(resolved1['phantomjs.port']).to eql 1234
+
+        # resolved2 must have the new ID, and the new port
         expect(resolved1['unobtainium_instance_id']).not_to eql \
           resolved2['unobtainium_instance_id']
+        expect(resolved2['phantomjs.port']).to eql 8888
+
+        # Urls must differ as well.
+        expect(resolved1[:url]).not_to eql resolved2[:url]
       end
 
-      it "does not overwrite IDs even when options change" do
+      it "generates new IDs for changed connection options" do
         opts = {
           phantomjs: {
             scheme: 'noodle',
@@ -161,13 +171,76 @@ describe ::Unobtainium::Drivers::Phantom do
           },
         }
         _, resolved1 = tester.resolve_options(:phantomjs, opts)
+        expect(resolved1['phantomjs.port']).to eql 1234
 
-        opts = resolved1.dup
+        opts = resolved1.deep_dup
         opts[:phantomjs][:port] = 8888
         _, resolved2 = tester.resolve_options(:phantomjs, opts)
 
+        # resolved1 must remain untouched by the change
+        expect(resolved1['phantomjs.port']).to eql 1234
+
+        # resolved2 must have the new ID, and the new port
+        expect(resolved1['unobtainium_instance_id']).not_to eql \
+          resolved2['unobtainium_instance_id']
+        expect(resolved2['phantomjs.port']).to eql 8888
+
+        # Urls must differ as well.
+        expect(resolved1[:url]).not_to eql resolved2[:url]
+      end
+
+      it "generates new IDs and port when other options change" do
+        opts = {
+          phantomjs: {
+            scheme: 'noodle',
+            port: 1234,
+          },
+        }
+        _, resolved1 = tester.resolve_options(:phantomjs, opts)
+        expect(resolved1['phantomjs.port']).to eql 1234
+
+        opts = resolved1.deep_dup
+        opts[:foo] = 'something'
+        _, resolved2 = tester.resolve_options(:phantomjs, opts)
+
+        # resolved1 must remain untouched by the change
+        expect(resolved1['phantomjs.port']).to eql 1234
+
+        # resolved2 must have the new ID, and a new port, and also the
+        # extra value.
+        expect(resolved1['unobtainium_instance_id']).not_to eql \
+          resolved2['unobtainium_instance_id']
+        expect(resolved2['phantomjs.port']).not_to eql 1234
+        expect(resolved2[:foo]).to eql 'something'
+
+        # Urls must differ as well.
+        expect(resolved1[:url]).not_to eql resolved2[:url]
+      end
+
+      it "leaves IDs untouched when the port is left undefined" do
+        opts = {
+          phantomjs: {
+            scheme: 'noodle',
+            port: nil,
+          },
+        }
+        _, resolved1 = tester.resolve_options(:phantomjs, opts)
+        expect(resolved1['phantomjs.port']).to be_nil
+
+        opts = resolved1.deep_dup
+        opts[:phantomjs][:port] = nil
+        _, resolved2 = tester.resolve_options(:phantomjs, opts)
+
+        # resolved1 must remain untouched by the change
+        expect(resolved1['phantomjs.port']).to be_nil
+
+        # resolved2 must have the same ID and port
         expect(resolved1['unobtainium_instance_id']).to eql \
           resolved2['unobtainium_instance_id']
+        expect(resolved2['phantomjs.port']).to eql resolved1['phantomjs.port']
+
+        # Urls must be the same, too!
+        expect(resolved1[:url]).to eql resolved2[:url]
       end
     end
   end
