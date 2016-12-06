@@ -13,8 +13,7 @@ module TestModule
     end
   end # class << self
 
-  def my_module_func
-  end
+  def my_module_func; end
 end # module TestModule
 
 module NonMatchingTestModule
@@ -25,8 +24,7 @@ module NonMatchingTestModule
     end
   end # class << self
 
-  def does_not_exist
-  end
+  def does_not_exist; end
 end # module NonMatchingTestModule
 
 module FakeModule

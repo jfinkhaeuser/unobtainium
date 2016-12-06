@@ -5,8 +5,7 @@ class Mock
     @passed_options = opts
   end
 
-  def quit
-  end
+  def quit; end
 end
 
 # rubocop:disable Style/GuardClause
