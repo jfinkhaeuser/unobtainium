@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    unobtainium (0.10.0)
+    unobtainium (0.11.0)
       collapsium (~> 0.8)
       collapsium-config (~> 0.4)
       ptools (~> 1.3)

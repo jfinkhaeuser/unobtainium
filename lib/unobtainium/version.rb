@@ -8,5 +8,5 @@
 #
 module Unobtainium
   # The current release version
-  VERSION = "0.10.0".freeze
+  VERSION = "0.11.0".freeze
 end
