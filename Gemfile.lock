@@ -100,8 +100,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  appium_lib
-  bundler (~> 1.12)
+  appium_lib (>= 9.1)
+  bundler (~> 1.13)
   chromedriver-helper
   codeclimate-test-reporter
   cucumber
