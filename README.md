@@ -95,6 +95,12 @@ details.
   at the same time.
 - [unobtainium-multiwait](https://github.com/jfinkhaeuser/unobtainium-multiwait)
   based on `multifind`, simplifies waiting for an element to appear.
+  
+# Integrations
+
+- [unobtainium-cucumber](https://github.com/jfinkhaeuser/unobtainium-cucumber)
+  integrates with [cucumber](https://cucumber.io), specifically providing some
+  convenient functionality such as automatic screenshot taking on failures.
 
 # Credits
 This gem is inspired by [LapisLazuli](https://github.com/spriteCloud/lapis-lazuli),
