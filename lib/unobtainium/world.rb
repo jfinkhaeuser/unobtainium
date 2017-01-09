@@ -24,6 +24,12 @@ module Unobtainium
     # Modules can have class methods, too, but it's a little more verbose to
     # provide them.
     module ClassMethods
+      # Configuraiton loading options
+      DEFAULT_CONFIG_OPTIONS = {
+        resolve_extensions: true,
+        nonexistent_base: :extend,
+      }.freeze
+
       # Set the configuration file
       def config_file=(name)
         ::Collapsium::Config.config_file = name
@@ -38,7 +44,7 @@ module Unobtainium
       # functionality, it has to be inherited when the former is
       # included...
       def included(klass)
-        set_config_path_default
+        set_config_defaults
 
         klass.class_eval do
           include ::Collapsium::Config
@@ -48,17 +54,22 @@ module Unobtainium
       # ... and when it's extended.
       def extended(world)
         # :nocov:
-        set_config_path_default
+        set_config_defaults
 
         world.extend(::Collapsium::Config)
         # :nocov:
       end
 
-      def set_config_path_default
+      def set_config_defaults
         # Override collapsium-config's default config path
         if ::Collapsium::Config.config_file == \
            ::Collapsium::Config::DEFAULT_CONFIG_PATH
           ::Collapsium::Config.config_file = 'config/config.yml'
+        end
+
+        if ::Collapsium::Config.config_options == \
+            ::Collapsium::Config::DEFAULT_CONFIG_OPTIONS
+          ::Collapsium::Config.config_options = DEFAULT_CONFIG_OPTIONS
         end
       end
     end # module ClassMethods
