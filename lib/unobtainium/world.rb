@@ -68,7 +68,7 @@ module Unobtainium
         end
 
         if ::Collapsium::Config.config_options == \
-            ::Collapsium::Config::DEFAULT_CONFIG_OPTIONS
+           ::Collapsium::Config::DEFAULT_CONFIG_OPTIONS
           ::Collapsium::Config.config_options = DEFAULT_CONFIG_OPTIONS
         end
       end
