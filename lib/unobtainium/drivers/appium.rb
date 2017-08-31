@@ -69,7 +69,7 @@ module Unobtainium
         def method_missing(meth, *args, &block)
           @drivers.each do |driver|
             if not driver.nil? and driver.respond_to?(meth)
-              return driver.send(meth.to_s, *args, &block)
+              return driver.send(meth, *args, &block)
             end
           end
           return super
