@@ -38,7 +38,7 @@ module Unobtainium
           begin
             @selenium_driver = driver.start_driver
           rescue StandardError
-            @selenium_driver = @appium_driver.driver
+            @selenium_driver = driver.driver
           end
 
           # Prioritize the two different drivers according to whether
