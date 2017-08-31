@@ -15,7 +15,7 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "runs a shell command" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(ls -l))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[ls -l])
     expect(runner.pid).to be_nil
     runner.start
     expect(runner.pid).not_to be_nil
@@ -25,7 +25,7 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "captures output" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(ls -l))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[ls -l])
     runner.start
     runner.wait
     expect(runner.stdout).not_to be_nil
@@ -37,7 +37,7 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "can be killed" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[sleep 30])
     runner.start
     expect(runner.pid).not_to be_nil
     runner.kill
@@ -45,7 +45,7 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "verifies #signal arguments" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[sleep 30])
     expect { runner.signal("KILL", scope: :foo) }.to raise_error(RuntimeError)
     runner.start
     expect { runner.signal("KILL", scope: :foo) }.to raise_error(ArgumentError)
@@ -58,14 +58,14 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "refuses to run the command twice without ending it first" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(ls -l))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[ls -l])
     expect { runner.start }.not_to raise_error
     expect { runner.start }.to raise_error(RuntimeError)
     runner.wait
   end
 
   it "kills when destroyed" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[sleep 30])
     runner.start
     expect(runner.pid).not_to be_nil
     runner.destroy
@@ -73,7 +73,7 @@ describe ::Unobtainium::Support::Runner do
   end
 
   it "cannot be killed twice" do
-    runner = ::Unobtainium::Support::Runner.new("foo", %w(sleep 30))
+    runner = ::Unobtainium::Support::Runner.new("foo", %w[sleep 30])
     runner.start
     expect(runner.pid).not_to be_nil
     runner.kill

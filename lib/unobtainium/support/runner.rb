@@ -114,7 +114,7 @@ module Unobtainium
           raise "No command is running!"
         end
 
-        if not [:self, :children, :all].include?(scope)
+        if not %i[self children all].include?(scope)
           raise ArgumentError, "The :scope argument must be one of :self, "\
               ":children or :all!"
         end
@@ -122,11 +122,11 @@ module Unobtainium
         # Figure out which pids to send the signal to. That is usually @pid,
         # but possibly its children.
         to_send = []
-        if [:self, :all].include?(scope)
+        if %i[self all].include?(scope)
           to_send << @pid
         end
 
-        if [:children, :all].include?(scope)
+        if %i[children all].include?(scope)
           children = ::Sys::ProcTable.ps.select { |p| p.ppid == @pid }
           to_send += children.collect(&:pid)
         end

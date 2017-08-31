@@ -21,8 +21,8 @@ module Unobtainium
     class Selenium
       # Recognized labels for matching the driver
       LABELS = {
-        firefox: [:ff,],
-        internet_explorer: [:internetexplorer, :explorer, :ie,],
+        firefox: %i[ff],
+        internet_explorer: %i[internetexplorer explorer ie],
         safari: [],
         chrome: [],
         chromium: [],
@@ -118,7 +118,7 @@ module Unobtainium
           end
 
           set_binary = options['desired_capabilities.chromeOptions.binary']
-          if set_binary and not set_binary == binary
+          if set_binary and set_binary != binary
             # There's already a binary set. We should warn about this, but
             # otherwise leave this choice.
             warn "You have the chrome binary '#{set_binary}' set in your "\

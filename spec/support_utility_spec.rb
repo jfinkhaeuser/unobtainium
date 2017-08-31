@@ -4,8 +4,8 @@ require_relative '../lib/unobtainium/support/util'
 class Tester
   LABELS = {
     noalias: [],
-    aliases: [:foo, :bar],
-    conflict: [:bar]
+    aliases: %i[foo bar],
+    conflict: %i[bar]
   }.freeze
 
   extend ::Unobtainium::Support::Utility

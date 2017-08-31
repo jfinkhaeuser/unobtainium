@@ -31,10 +31,10 @@ When(/^I navigate to the best website in the world again$/) do
 end
 
 Then(/^I expect the driver in each case to be the same$/) do
-  if not @driver_ids[0] == @driver_ids[1]
+  if @driver_ids[0] != @driver_ids[1]
     raise "Driver instance changed!"
   end
-  if not @driver_impl_ids[0] == @driver_impl_ids[1]
+  if @driver_impl_ids[0] != @driver_impl_ids[1]
     raise "Driver implementation instance changed!"
   end
 end

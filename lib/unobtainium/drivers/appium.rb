@@ -74,7 +74,7 @@ module Unobtainium
 
       # Recognized labels for matching the driver
       LABELS = {
-        ios: [:iphone, :ipad],
+        ios: %i[iphone ipad],
         android: [],
       }.freeze
 
@@ -132,7 +132,7 @@ module Unobtainium
           # the :url key if the normalized label is remote, and setting
           # appropriate options.
           set_url = options['appium_lib.server_url']
-          if set_url and options['url'] and not set_url == options['url']
+          if set_url and options['url'] and set_url != options['url']
             warn "You have the remote URL '#{set_url}' set in your options, "\
               "so we're not replacing it with '#{options['url']}'!"
           elsif not set_url

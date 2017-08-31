@@ -42,8 +42,8 @@ module Unobtainium
       # @param port [Integer] port number (1..65535)
       # @param domains [Array/Symbol] :INET, :INET6, etc. or an Array of
       #     these. Any from Socket::Constants::AF_* work. Defaults to
-      #     [:INET, :INET6].
-      def port_open?(host, port, domains = [:INET, :INET6])
+      #     %i[INET INET6].
+      def port_open?(host, port, domains = %i[INET INET6])
         if port < 1 or port > 65535
           raise ArgumentError, "Port must be in range 1..65535!"
         end
@@ -101,10 +101,10 @@ module Unobtainium
         end
         opts = { for: :open, amount: :all }.merge(opts)
 
-        if not [:all, :first].include?(opts[:amount])
+        if not %i[all first].include?(opts[:amount])
           raise ArgumentError, ":amount must be one of :all, :first!"
         end
-        if not [:open, :closed, :available].include?(opts[:for])
+        if not %i[open closed available].include?(opts[:for])
           raise ArgumentError, ":for must beone of :open, :closed, :available!"
         end
 
@@ -151,7 +151,7 @@ module Unobtainium
           return true
         end
 
-        if not open and [:closed, :available].include?(test_for)
+        if not open and %i[closed available].include?(test_for)
           return true
         end
 

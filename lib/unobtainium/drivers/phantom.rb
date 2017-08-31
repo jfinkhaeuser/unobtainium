@@ -27,7 +27,7 @@ module Unobtainium
     class Phantom < Selenium
       # Recognized labels for matching the driver
       LABELS = {
-        phantomjs: [:headless, :phantom],
+        phantomjs: %i[headless phantom],
       }.freeze
 
       # Port scanning ranges (can also be arrays or single port numbers.

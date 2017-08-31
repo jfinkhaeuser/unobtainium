@@ -7,7 +7,7 @@ describe ::Unobtainium::Support::PortScanner do
   # This Socket#connect mock finds port 1234 or 4321 open
   def connect_mock(_, addr)
     port, = Socket.unpack_sockaddr_in(addr)
-    if port == 1234 or port == 4321
+    if [1234, 4321].include?(port)
       raise Errno::EISCONN
     end
     raise Errno::ECONNREFUSED
@@ -39,7 +39,7 @@ describe ::Unobtainium::Support::PortScanner do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::ECONNREFUSED
       )
-      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+      expect(tester.port_open?('localhost', 1234, %i[INET INET6])).to be_falsy
     end
 
     it "rejects bad domain parameters" do
@@ -52,7 +52,7 @@ describe ::Unobtainium::Support::PortScanner do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::EINVAL # or EAFNOSUPPORT
       )
-      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+      expect(tester.port_open?('localhost', 1234, %i[INET INET6])).to be_falsy
     end
 
     it "retries for several seconds if a socket is being created" do
@@ -60,7 +60,7 @@ describe ::Unobtainium::Support::PortScanner do
           Errno::EINPROGRESS
       )
       before = Time.now.utc
-      expect(tester.port_open?('localhost', 1234, [:INET, :INET6])).to be_falsy
+      expect(tester.port_open?('localhost', 1234, %i[INET INET6])).to be_falsy
       after = Time.now.utc
 
       elapsed = after - before
