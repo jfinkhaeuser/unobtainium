@@ -16,8 +16,8 @@ require 'unobtainium/version'
 Gem::Specification.new do |spec|
   spec.name          = "unobtainium"
   spec.version       = Unobtainium::VERSION
-  spec.authors       = ["Jens Finkhaeuser"]
-  spec.email         = ["jens@finkhaeuser.de"]
+  spec.authors       = ["Jens Finkhaeuser", "Jana Rekittke"]
+  spec.email         = ["jens@finkhaeuser.de", "jrekittke@babbel.com"]
   spec.description   = %q(
     Unobtainium wraps Selenium and Appium in a simple driver abstraction so that
     test code can more easily cover desktop browsers, mobile browsers and mobile
