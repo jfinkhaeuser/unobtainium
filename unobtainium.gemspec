@@ -11,9 +11,8 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'unobtainium/version'
 
-# rubocop:disable Style/UnneededPercentQ, Style/ExtraSpacing
-# rubocop:disable Style/SpaceAroundOperators
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable Style/UnneededPercentQ, Layout/ExtraSpacing
+# rubocop:disable Layout/SpaceAroundOperators
 Gem::Specification.new do |spec|
   spec.name          = "unobtainium"
   spec.version       = Unobtainium::VERSION
@@ -57,9 +56,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sys-proctable", "~> 1.1"
   spec.add_dependency "ptools", "~> 1.3"
-  spec.add_dependency "collapsium", "~> 0.8"
-  spec.add_dependency "collapsium-config", "~> 0.5"
+  spec.add_dependency "collapsium", "~> 0.9"
+  spec.add_dependency "collapsium-config", "~> 0.6"
 end
-# rubocop:enable Metrics/BlockLength
-# rubocop:enable Style/SpaceAroundOperators
-# rubocop:enable Style/UnneededPercentQ, Style/ExtraSpacing
+# rubocop:enable Layout/SpaceAroundOperators
+# rubocop:enable Style/UnneededPercentQ, Layout/ExtraSpacing
