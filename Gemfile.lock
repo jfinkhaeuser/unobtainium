@@ -28,7 +28,7 @@ GEM
       nokogiri (~> 1.6)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
-    collapsium (0.9.0)
+    collapsium (0.9.1)
     collapsium-config (0.6.0)
       collapsium (~> 0.9)
     cucumber (2.4.0)
