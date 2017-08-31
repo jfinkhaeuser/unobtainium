@@ -80,6 +80,9 @@ Style/NumericPredicate:
 Style/YodaCondition:
   Enabled: false
 
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 # Layout
 
 Layout/EmptyLineAfterMagicComment:
