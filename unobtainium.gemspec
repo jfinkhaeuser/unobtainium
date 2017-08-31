@@ -42,11 +42,11 @@ Gem::Specification.new do |spec|
   spec.requirements  = "Either or all of 'selenium-webdriver', 'appium_lib', "\
                        "'phantomjs'"
 
-  spec.add_development_dependency "bundler", "~> 1.13"
-  spec.add_development_dependency "rubocop", "~> 0.46"
+  spec.add_development_dependency "bundler", "~> 1.15"
+  spec.add_development_dependency "rubocop", "~> 0.49"
   spec.add_development_dependency "rake", "~> 11.3"
-  spec.add_development_dependency "rspec", "~> 3.5"
-  spec.add_development_dependency "simplecov", "~> 0.12"
+  spec.add_development_dependency "rspec", "~> 3.6"
+  spec.add_development_dependency "simplecov", "~> 0.13"
   spec.add_development_dependency "yard", "~> 0.9"
   spec.add_development_dependency "appium_lib", ">= 9.1"
   spec.add_development_dependency "selenium-webdriver"
