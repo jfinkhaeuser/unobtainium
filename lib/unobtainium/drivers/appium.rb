@@ -37,7 +37,7 @@ module Unobtainium
           @appium_driver = driver
           begin
             @selenium_driver = driver.start_driver
-          rescue StandardError => e
+          rescue StandardError
             @selenium_driver = @appium_driver.driver
           end
 
@@ -99,7 +99,7 @@ module Unobtainium
         # Return true if the given label matches this driver implementation,
         # false otherwise.
         def matches?(label)
-          return nil != normalize_label(label)
+          return !normalize_label(label).nil?
         end
 
         ##
