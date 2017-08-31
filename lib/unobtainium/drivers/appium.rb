@@ -35,7 +35,11 @@ module Unobtainium
         # Initialize
         def initialize(driver, compatibility = true)
           @appium_driver = driver
-          @selenium_driver = driver.start_driver
+          begin
+            @selenium_driver = driver.start_driver
+          rescue StandardError => e
+            @selenium_driver = @appium_driver.driver
+          end
 
           # Prioritize the two different drivers according to whether
           # compatibility with Selenium is more desirable than functionality.
