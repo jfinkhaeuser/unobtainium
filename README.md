@@ -16,8 +16,6 @@ also added.
 
 [![Gem Version](https://badge.fury.io/rb/unobtainium.svg)](https://badge.fury.io/rb/unobtainium)
 [![Build status](https://travis-ci.org/jfinkhaeuser/unobtainium.svg?branch=master)](https://travis-ci.org/jfinkhaeuser/unobtainium)
-[![Code Climate](https://codeclimate.com/github/jfinkhaeuser/unobtainium/badges/gpa.svg)](https://codeclimate.com/github/jfinkhaeuser/unobtainium)
-[![Test Coverage](https://codeclimate.com/github/jfinkhaeuser/unobtainium/badges/coverage.svg)](https://codeclimate.com/github/jfinkhaeuser/unobtainium/coverage)
 
 # Usage
 
