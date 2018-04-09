@@ -42,22 +42,21 @@ Gem::Specification.new do |spec|
   spec.requirements  = "Either or all of 'selenium-webdriver', 'appium_lib', "\
                        "'phantomjs'"
 
-  spec.add_development_dependency "bundler", "~> 1.15"
-  spec.add_development_dependency "rubocop", "~> 0.49"
+  spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 11.3"
-  spec.add_development_dependency "rspec", "~> 3.6"
-  spec.add_development_dependency "simplecov", "~> 0.13"
-  spec.add_development_dependency "yard", "~> 0.9"
+  spec.add_development_dependency "rspec", "~> 3.7"
+  spec.add_development_dependency "simplecov", "~> 0.16"
+  spec.add_development_dependency "yard", "~> 0.9", ">= 0.9.12"
   spec.add_development_dependency "appium_lib", ">= 9.1"
   spec.add_development_dependency "selenium-webdriver"
   spec.add_development_dependency "chromedriver-helper"
   spec.add_development_dependency "phantomjs"
   spec.add_development_dependency "cucumber"
 
-  spec.add_dependency "sys-proctable", "~> 1.1"
+  spec.add_dependency "sys-proctable", "~> 1.2"
   spec.add_dependency "ptools", "~> 1.3"
-  spec.add_dependency "collapsium", "~> 0.9"
-  spec.add_dependency "collapsium-config", "~> 0.6"
+  spec.add_dependency "collapsium", "~> 0.10"
+  spec.add_dependency "collapsium-config", "~> 0.7"
 end
 # rubocop:enable Layout/SpaceAroundOperators
 # rubocop:enable Style/UnneededPercentQ, Layout/ExtraSpacing
