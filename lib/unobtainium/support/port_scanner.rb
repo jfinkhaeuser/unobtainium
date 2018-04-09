@@ -3,7 +3,7 @@
 # unobtainium
 # https://github.com/jfinkhaeuser/unobtainium
 #
-# Copyright (c) 2016-2017 Jens Finkhaeuser and other unobtainium contributors.
+# Copyright (c) 2016-2018 Jens Finkhaeuser and other unobtainium contributors.
 # All rights reserved.
 #
 
@@ -203,6 +203,9 @@ module Unobtainium
             break
           rescue Errno::EINVAL, Errno::EAFNOSUPPORT
             # Unsupported protocol
+            break
+          rescue Errno::EADDRNOTAVAIL
+            # Address not available
             break
           end
         end

@@ -55,6 +55,13 @@ describe ::Unobtainium::Support::PortScanner do
       expect(tester.port_open?('localhost', 1234, %i[INET INET6])).to be_falsy
     end
 
+    it "handles unavailable addresses" do
+      allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
+          Errno::EADDRNOTAVAIL
+      )
+      expect(tester.port_open?('localhost', 1234, %i[INET INET6])).to be_falsy
+    end
+
     it "retries for several seconds if a socket is being created" do
       allow_any_instance_of(Socket).to receive(:connect_nonblock).and_raise(
           Errno::EINPROGRESS
